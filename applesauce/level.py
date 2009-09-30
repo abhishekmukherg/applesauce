@@ -4,6 +4,8 @@ import itertools
 import pygame
 
 from applesauce.sprite import util
+from applesauce.sprite import player
+
 
 
 class Level(object):
@@ -13,11 +15,10 @@ class Level(object):
         self.rect = self.image.get_rect()
         self.__image_name = image
 
-        self.player = pygame.sprite.GroupSingle()
+        self.player = pygame.sprite.GroupSingle(player.Player())
 
         self.enemies = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
-
         self.others = pygame.sprite.Group()
 
         self.__groups = (self.player, self.enemies, self.walls, self.others)
