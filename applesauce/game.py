@@ -1,13 +1,14 @@
 
 import pygame
 
-import applesauce.sprite.player
+from applesauce.sprite import player, util
 
 
 class Game( object ):
     caption = "Applesauce"
     #level_data = 'level.dat'
-    #background_image = 'images/FinalCity.png'
+    level1_image = 'lvl1.png'
+    level2_image = 'lvl2.png'
     #splash_image = 'images/MainScreen.png'
     #win_image = 'images/WinScreen.png'
     #lose_image = 'images/LoseScreen.png'
@@ -22,14 +23,15 @@ class Game( object ):
         
         self.state = 'splash'
         self.clock = pygame.time.Clock()
-        #self.player = player.Player()
+        self.player = player.Player()
         self.enemy_list = []
         
         self.screen = pygame.display.set_mode( (self.screen_width, self.screen_height) )
-        #self.background = pygame.image.load( self.bg_image ).convert()
-        #self.splash = pygame.image.load( self.splash_image ).convert()
-        #self.win = pygame.image.load( self.win_image ).convert()
-        #self.lose = pygame.image.load( self.lose_image ).convert()
+        self.level1 = util.load_image( self.level1_image )
+        self.level2 = util.load_image( self.level2_image )
+        #self.splash = util.load_image( self.splash_image )
+        #self.win = util.load_image( self.win_image )
+        #self.lose = util.load_image( self.lose_image )
         #self.read_level( self.level_data )
 
 
@@ -48,10 +50,10 @@ class Game( object ):
         self.clock.tick( 50 )
         for event in pygame.event.get():
             self.handle_event( event )
-        #if self.state == 'act1' or self.state == 'act2':
+        if self.state == 'act1' or self.state == 'act2':
         #    for enemy in self.enemy_list:
         #        enemy.update()
-        #    self.player.update()
+            self.player.update()
         
 
     def handle_event( self, event ):
@@ -65,24 +67,24 @@ class Game( object ):
             elif event.key == pygame.K_ESCAPE:
                 self.state = 'lose'
             elif event.key == pygame.K_F1:
-                self.screen = pygame.display.set_mode( (self.screen_width, self.screen_height), pygame.FULLSCREEN ) 'right', True )
-            #elif event.key == pygame.K_w:
-            #    self.player.setMovement( 'up', True )
-            #elif event.key == pygame.K_s:
-            #    self.player.setMovement( 'down', True )
-            #elif event.key == pygame.K_a:
-            #    self.player.setMovement( 'left', True )
-            #elif event.key == pygame.K_d:
-            #    self.player.setMovement( 'right', True )
-        #elif event.type == pygame.KEYUP:
-        #    if event.key == pygame.K_w:
-        #        self.player.setMovement( 'up', False )
-        #    elif event.key == pygame.K_s:
-        #        self.player.setMovement( 'down', False )
-        #    elif event.key == pygame.K_a:
-        #        self.player.setMovement( 'left', False )
-        #    elif event.key == pygame.K_d:
-        #        self.player.setMovement( 'right', False )
+                self.screen = pygame.display.set_mode( (self.screen_width, self.screen_height), pygame.FULLSCREEN )
+            elif event.key == pygame.K_w:
+                self.player.movement['up'] = 1
+            elif event.key == pygame.K_s:
+                self.player.movement['down'] = 1
+            elif event.key == pygame.K_a:
+                self.player.movement['left'] = 1
+            elif event.key == pygame.K_d:
+                self.player.movement['right'] = 1
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_w:
+                self.player.movement['up'] = 0
+            elif event.key == pygame.K_s:
+                self.player.movement['down'] = 0
+            elif event.key == pygame.K_a:
+                self.player.movement['left'] = 0
+            elif event.key == pygame.K_d:
+                self.player.movement['right'] = 0
         
 
     def draw(self):
@@ -98,20 +100,20 @@ class Game( object ):
         #elif self.state == 'lose':
         #
         #draw main game
-        #else:
+        if self.state == 'act1': #else:
             #draw background
+            self.screen.blit( self.level1, self.level1.get_rect() )
             #draw player
-            #self.player.draw(self.screen)
+            self.player.draw(self.screen)
             #draw enemies
             #for enemy in self.enemy_list:
             #    enemy.draw(self.screen)
 
         
         
-def main(argv):
-    g = Game()
-    while g.state != 'over':
-        g.update()
-        g.draw()
-        pygame.display.flip()
-    #pygame.mixer.music.stop()
+g = Game()
+while g.state != 'over':
+    g.update()
+    g.draw()
+    pygame.display.flip()
+#pygame.mixer.music.stop()

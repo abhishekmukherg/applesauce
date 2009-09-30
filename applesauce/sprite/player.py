@@ -8,30 +8,15 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, *groups):
         pygame.sprite.Sprite.__init__(self, *groups)
         # TODO: defind self.image, self.rect
-        self.movement = {'up':False, 'down':False, 'left':False, 'right':False}
+        self.image = pygame.Surface((50,50))
+        self.rect = self.image.get_rect()
+        self.movement = {'up':0, 'down':0, 'left':0, 'right':0}
         self.speed = 5
         
-    def set_movement(self, direction):
-        """Sets the movement direction
-
-        Removes movement on all directions except "direction". If direction is
-        a list, then set to those directions. If direction is None, no movement
-        is done
-
-        """
-        if direction is None: # no movement
-            self.__cancel_movement()
-        elif isinstance(direction, collections.Iterable):
-            self.__set_movement(direction)
-        else:
-            self.__set_movement([direction])
-
-    def __cancel_movement(self):
-        for k in self.movement:
-            self.movement[k] = False
-
-    def __set_movement(self, directions):
-        self.__cancel_movement()
-        for direction in directions:
-            assert direction in self.movement
-            self.movement[dir] = True
+    def update(self):
+        self.rect.move_ip( self.speed*(self.movement['right']-self.movement['left']), self.speed*(self.movement['down']-self.movement['up']) )
+        
+    
+    def draw(self, screen):
+        screen.blit( self.image, self.rect )
+        
