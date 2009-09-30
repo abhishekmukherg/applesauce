@@ -1,4 +1,8 @@
-import pygame, sys, operator, math, string, player
+
+import pygame
+
+import applesauce.sprite.player
+
 
 class Game( object ):
     caption = "Applesauce"
