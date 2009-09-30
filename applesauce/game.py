@@ -108,9 +108,10 @@ class Game( object ):
 
         
         
-g = Game()
-while g.state != 'over':
-    g.update()
-    g.draw()
-    pygame.display.flip()
-#pygame.mixer.music.stop()
+def main(argv):
+    g = Game()
+    while g.state != 'over':
+        g.update()
+        g.draw()
+        pygame.display.flip()
+    #pygame.mixer.music.stop()
