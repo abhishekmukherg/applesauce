@@ -6,7 +6,6 @@ from applesauce.sprite import player, util
 
 
 class Game( object ):
-    caption = "Applesauce"
     #level_data = 'level.dat'
     level1_image = 'lvl0.png'
     level2_image = 'lvl1.png'
@@ -17,7 +16,7 @@ class Game( object ):
     
     def __init__( self ):
         pygame.init()
-        pygame.display.set_caption( self.caption )
+        self.caption = settings.CAPTION
         
         self.state = 'splash'
         self.clock = pygame.time.Clock()
@@ -42,7 +41,14 @@ class Game( object ):
     #        if line != "\n":
     #            string.replace( line, ' ', '' )
     #            line_arr = line.split( ',' )
-                    
+     
+    @property
+    def caption(self):
+        return pygame.display.get_caption()
+
+    @caption.setter
+    def caption(self, val):
+        pygame.display.set_caption(val)
 
     def update( self ):
         self.clock.tick( 50 )
