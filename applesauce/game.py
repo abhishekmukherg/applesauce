@@ -2,7 +2,8 @@
 import pygame
 
 from applesauce import settings
-from applesauce.sprite import player, util
+from applesauce import level
+from applesauce.sprite import util
 
 
 class Game( object ):
@@ -20,12 +21,10 @@ class Game( object ):
         
         self.state = 'splash'
         self.clock = pygame.time.Clock()
-        self.player = player.Player()
+        self.screen = pygame.display.set_mode(settings.SCREEN_SIZE)
+        self.level = level.Level(self.level1_image)
         self.enemy_list = []
         
-        self.screen = pygame.display.set_mode(settings.SCREEN_SIZE)
-        self.level1 = util.load_image( self.level1_image )
-        self.level2 = util.load_image( self.level2_image )
         #self.splash = util.load_image( self.splash_image )
         #self.win = util.load_image( self.win_image )
         #self.lose = util.load_image( self.lose_image )
@@ -55,14 +54,13 @@ class Game( object ):
         for event in pygame.event.get():
             self.handle_event( event )
         if self.state == 'act1' or self.state == 'act2':
-        #    for enemy in self.enemy_list:
-        #        enemy.update()
-            self.player.update()
+            self.level.update()
         
 
     def handle_event( self, event ):
         if event.type == pygame.QUIT:
             self.state = 'over'
+        player = self.level.player.sprite
         if event.type == pygame.KEYDOWN:
             if self.state == 'splash':
                 self.state = 'act1'
@@ -74,22 +72,22 @@ class Game( object ):
                 self.screen = pygame.display.set_mode(settings.SCREEN_SIZE,
                                                       pygame.FULLSCREEN )
             elif event.key == pygame.K_w:
-                self.player.movement['up'] = 1
+                player.movement['up'] = 1
             elif event.key == pygame.K_s:
-                self.player.movement['down'] = 1
+                player.movement['down'] = 1
             elif event.key == pygame.K_a:
-                self.player.movement['left'] = 1
+                player.movement['left'] = 1
             elif event.key == pygame.K_d:
-                self.player.movement['right'] = 1
+                player.movement['right'] = 1
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
-                self.player.movement['up'] = 0
+                player.movement['up'] = 0
             elif event.key == pygame.K_s:
-                self.player.movement['down'] = 0
+                player.movement['down'] = 0
             elif event.key == pygame.K_a:
-                self.player.movement['left'] = 0
+                player.movement['left'] = 0
             elif event.key == pygame.K_d:
-                self.player.movement['right'] = 0
+                player.movement['right'] = 0
         
 
     def draw(self):
@@ -107,9 +105,8 @@ class Game( object ):
         #draw main game
         if self.state == 'act1': #else:
             #draw background
-            self.screen.blit( self.level1, self.level1.get_rect() )
+            self.level.draw(self.screen)
             #draw player
-            self.player.draw(self.screen)
             #draw enemies
             #for enemy in self.enemy_list:
             #    enemy.draw(self.screen)

@@ -43,7 +43,7 @@ class Level(object):
         for sprite_iter in sprites:
             if not hasattr(sprite, '__iter__'):
                 sprite_iter = [sprite_iter]
-            for sprite in sprite_iter
+            for sprite in sprite_iter:
                 for group in self.__groups:
                     group.remove(sprite)
 
@@ -51,7 +51,7 @@ class Level(object):
         for sprite_iter in sprites:
             if not hasattr(sprite, '__iter__'):
                 sprite_iter = [sprite_iter]
-            for sprite in sprite_iter
+            for sprite in sprite_iter:
                 for group in self.__groups:
                     if sprite in group:
                         break
@@ -63,8 +63,9 @@ class Level(object):
         for group in self.__groups:
             group.update(*args)
 
-    def draw(self):
-        raise NotImplementedError
+    def draw(self, surface):
+        surface.blit(self.image, self.rect)
+        self.player.draw(surface)
 
     def clear(self):
         for group in self.__groups:
