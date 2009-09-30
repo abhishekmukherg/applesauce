@@ -5,7 +5,7 @@ import pygame
 
 class Player(pygame.sprite.Sprite):
     
-    def __init__(self, *groups, constraint):
+    def __init__(self, constraint, *groups):
         pygame.sprite.Sprite.__init__(self, *groups)
         # TODO: defind self.image, self.rect
         self.image = pygame.Surface((50,50))

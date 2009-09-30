@@ -15,7 +15,7 @@ class Level(object):
         self.rect = self.image.get_rect()
         self.__image_name = image
 
-        self.player = pygame.sprite.GroupSingle(player.Player())
+        self.player = pygame.sprite.GroupSingle(player.Player(self.rect))
 
         self.enemies = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
