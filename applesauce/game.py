@@ -1,21 +1,19 @@
 
 import pygame
 
+from applesauce import settings
 from applesauce.sprite import player, util
 
 
 class Game( object ):
     caption = "Applesauce"
     #level_data = 'level.dat'
-    level1_image = 'lvl1.png'
-    level2_image = 'lvl2.png'
+    level1_image = 'lvl0.png'
+    level2_image = 'lvl1.png'
     #splash_image = 'images/MainScreen.png'
     #win_image = 'images/WinScreen.png'
     #lose_image = 'images/LoseScreen.png'
     #music = 'audio/CT_factory Ruins.ogg'
-    screen_width = 800
-    screen_height = 600
-    
     
     def __init__( self ):
         pygame.init()
@@ -26,7 +24,7 @@ class Game( object ):
         self.player = player.Player()
         self.enemy_list = []
         
-        self.screen = pygame.display.set_mode( (self.screen_width, self.screen_height) )
+        self.screen = pygame.display.set_mode(settings.SCREEN_SIZE)
         self.level1 = util.load_image( self.level1_image )
         self.level2 = util.load_image( self.level2_image )
         #self.splash = util.load_image( self.splash_image )
@@ -67,7 +65,8 @@ class Game( object ):
             elif event.key == pygame.K_ESCAPE:
                 self.state = 'lose'
             elif event.key == pygame.K_F1:
-                self.screen = pygame.display.set_mode( (self.screen_width, self.screen_height), pygame.FULLSCREEN )
+                self.screen = pygame.display.set_mode(settings.SCREEN_SIZE,
+                                                      pygame.FULLSCREEN )
             elif event.key == pygame.K_w:
                 self.player.movement['up'] = 1
             elif event.key == pygame.K_s:
