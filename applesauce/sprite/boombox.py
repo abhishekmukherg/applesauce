@@ -4,7 +4,7 @@ import pygame
 class Boombox(pygame.sprite.Sprite):
     
     
-    def __init__(self, *groups, center):
+    def __init__(self, center, *groups):
         pygame.sprite.Sprite.__init__( self, *groups )
         self.image = pygame.Surface( ( 10, 10 ) )
         self.image.fill( ( 255, 255, 255 ) ) #Temp till image

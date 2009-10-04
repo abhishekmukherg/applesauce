@@ -74,6 +74,8 @@ class Game( object ):
             elif event.key == pygame.K_F1:
                 self.screen = pygame.display.set_mode(settings.SCREEN_SIZE,
                                                       pygame.FULLSCREEN )
+            elif event.key == pygame.K_LEFT:
+                self.level.add_boombox()
             elif event.key == pygame.K_w:
                 player.movement['up'] = 1
             elif event.key == pygame.K_s:
