@@ -1,4 +1,3 @@
-
 import pygame
 
 from applesauce import settings
@@ -14,6 +13,7 @@ class Game( object ):
     #win_image = 'images/WinScreen.png'
     #lose_image = 'images/LoseScreen.png'
     #music = 'audio/CT_factory Ruins.ogg'
+    
     
     def __init__( self ):
         pygame.init()
@@ -41,14 +41,17 @@ class Game( object ):
     #            string.replace( line, ' ', '' )
     #            line_arr = line.split( ',' )
      
+     
     @property
     def caption(self):
         return pygame.display.get_caption()
 
+        
     @caption.setter
     def caption(self, val):
         pygame.display.set_caption(val)
 
+        
     def update( self ):
         self.clock.tick( 50 )
         for event in pygame.event.get():

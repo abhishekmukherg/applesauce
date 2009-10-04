@@ -1,17 +1,15 @@
-import collections
-
 import pygame
 
 
 class Player(pygame.sprite.Sprite):
     
+    
     def __init__(self, constraint, *groups):
-        pygame.sprite.Sprite.__init__(self, *groups)
-        # TODO: defind self.image, self.rect
-        self.image = pygame.Surface((50,50))
+        pygame.sprite.Sprite.__init__( self, *groups )
+        self.image = pygame.Surface( ( 50, 50 ) )
         self.rect = self.image.get_rect()
         self.constraint = constraint
-        self.movement = {'up':0, 'down':0, 'left':0, 'right':0}
+        self.movement = { 'up':0, 'down':0, 'left':0, 'right':0 }
         self.facing = 'right'
         self.speed = 5
         self.lives = 3
@@ -22,7 +20,7 @@ class Player(pygame.sprite.Sprite):
         
     def update(self):
         tmprect = self.rect.move( self.speed*(self.movement['right']-self.movement['left']), self.speed*(self.movement['down']-self.movement['up']) )
-        if not(self.constraint.contains(tmprect)):
+        if not( self.constraint.contains( tmprect ) ):
             if tmprect.top < self.constraint.top:
                 self.movement['up'] = 0
             if tmprect.bottom > self.constraint.bottom:
