@@ -84,6 +84,8 @@ class Game( object ):
                 player.movement['left'] = 1
             elif event.key == pygame.K_d:
                 player.movement['right'] = 1
+            elif event.key == pygame.K_u:
+                self.level.add_enemy(0)
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
                 player.movement['up'] = 0

@@ -6,8 +6,25 @@ import pygame
 from applesauce import settings
 from applesauce.sprite import util
 from applesauce.sprite import player
+from applesauce.sprite import enemies
 from applesauce.sprite import boombox
 
+
+class InvalidEnemyException(IndexError):
+
+    """
+    Raised when an invalid enemy index is given to add_enemy
+    """
+    
+    def __init__(self, given, max):
+        self.given = given
+        self.max = max
+
+    def __unicode__(self):
+        return u"%d > %d" % (self.given, self.max)
+
+    def __str__(self):
+        return str(unicode(self))
 
 
 class Level(object):
@@ -44,11 +61,23 @@ class Level(object):
     def add(self, *sprites):
         self.others.add(*sprites)
         
-        
     def add_boombox(self):
         self.add( boombox.Boombox( self.player.sprite.rect.center ) )
-    
 
+    def add_enemy(self, level, location=(0, 0)):
+        """Adds an anemy to the level
+
+        the level parameter can either be 0 or 1, 0 indicates a BasicEnemy,
+        1 indicates an Officer will be added. location is in level-coordinates
+
+        """
+        if level == 0:
+            self.enemies.add(enemies.BasicEnemy())
+        elif level == 1:
+            self.enemies.add(enemies.Officer())
+        else:
+            raise InvalidEnemyException(level, 1)
+    
     def remove(self, *sprites):
         for sprite_iter in sprites:
             if not hasattr(sprite, '__iter__'):
@@ -84,10 +113,11 @@ class Level(object):
         # blit background
         surface.blit(self.image, rect.move(-self.player.sprite.rect.left,
             -self.player.sprite.rect.top))
-        for sprite in self.others:
-            surface.blit(sprite.image, rect.move(
-                -player_rect.left + sprite.rect.left,
-                -player_rect.top + sprite.rect.top))
+        for group in (self.others, self.enemies):
+            for sprite in group:
+                surface.blit(sprite.image, rect.move(
+                    -player_rect.left + sprite.rect.left,
+                    -player_rect.top + sprite.rect.top))
         # blit player
         surface.blit(self.player.sprite.image, rect)
 
