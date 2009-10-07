@@ -72,9 +72,9 @@ class Level(object):
 
         """
         if level == 0:
-            enemy = enemies.BasicEnemy()
+            enemy = enemies.BasicEnemy(self.player.sprite)
         elif level == 1:
-            enemy = enemies.Officer()
+            enemy = enemies.Officer(self.player.sprite)
         else:
             raise InvalidEnemyException(level, 1)
         enemy.rect.topleft = location

@@ -12,15 +12,6 @@ LOG = logging.getLogger(__name__)
 
 
 class Game( object ):
-    #level_data = 'level.dat'
-    level1_image = 'lvl0.png'
-    level2_image = 'lvl1.png'
-    #splash_image = 'images/MainScreen.png'
-    #win_image = 'images/WinScreen.png'
-    #lose_image = 'images/LoseScreen.png'
-    #music = 'audio/CT_factory Ruins.ogg'
-    
-    
     def __init__( self ):
         pygame.init()
         self.caption = settings.CAPTION
@@ -28,8 +19,8 @@ class Game( object ):
         self.state = 'splash'
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode(settings.SCREEN_SIZE)
-        self.level = level.Level(self.level1_image)
-        self.level_config = level_config.LevelConfig("level_data/level0.ini")
+        self.level = None
+        self.level_config = "level_data/level0.ini"
         self.enemy_list = []
         self.populate_level()
         
@@ -48,7 +39,16 @@ class Game( object ):
     #        if line != "\n":
     #            string.replace( line, ' ', '' )
     #            line_arr = line.split( ',' )
-     
+
+    @property
+    def level_config(self):
+        return self.__level_config
+
+    @level_config.setter
+    def level_config(self, val):
+        self.__level_config = level_config.LevelConfig(val)
+        self.level = level.Level(self.level_config.image())
+
     def populate_level(self):
         for location in self.level_config.basic_enemies():
             LOG.debug("Adding basic enemy at %s" % str(location))

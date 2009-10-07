@@ -34,3 +34,6 @@ class LevelConfig(object):
     def officers(self):
         return self.__get_list_from_section("Officers")
 
+    def image(self):
+        return self.config.get("LevelInfo", "image")
+
