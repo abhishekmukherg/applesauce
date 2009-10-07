@@ -8,6 +8,7 @@ from applesauce.sprite import util
 from applesauce.sprite import player
 from applesauce.sprite import enemies
 from applesauce.sprite import boombox
+from applesauce.sprite import wall
 
 
 class InvalidEnemyException(IndexError):
@@ -38,31 +39,35 @@ class Level(object):
 
         self.enemies = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
+        self.pickups = pygame.sprite.Group()
         self.others = pygame.sprite.Group()
 
         self.__groups = (self.player, self.enemies, self.walls, self.others)
-
         
     def sprites(self):
         return tuple(itertools.chain(*self.__groups))
-
         
     def copy(self):
         new_level = Level(self.__image_name)
         new_level.player = copy.copy(self.player)
         new_level.enemies = copy.copy(self.enemies)
         new_level.walls = copy.copy(self.walls)
+        new_level.pickups = copy.copy(self.pickups)
         new_level.others = copy.copy(self.others)
         new_level.__groups = (new_level.player, new_level.enemies,
-                new_level.walls, new_level.others)
+                new_level.walls, new_level.pickups, new_level.others)
         return new_level
-
         
     def add(self, *sprites):
         self.others.add(*sprites)
         
     def add_boombox(self):
-        self.add( boombox.Boombox( self.player.sprite.rect.center ) )
+        if self.player.sprite.boomboxes > 0:
+            self.add( boombox.Boombox( self.player.sprite.rect.center ) )
+            self.player.sprite.boomboxes -= 1
+            
+    def add_wall(self, location = (0,0,0,0)):
+        self.walls.add( wall.Wall( location[0], location[1], location[2], location[3] ) )
 
     def add_enemy(self, level, location=(0, 0)):
         """Adds an anemy to the level
@@ -87,7 +92,6 @@ class Level(object):
             for sprite in sprite_iter:
                 for group in self.__groups:
                     group.remove(sprite)
-
                     
     def has(self, *sprites):
         for sprite_iter in sprites:
@@ -102,6 +106,8 @@ class Level(object):
         return True
 
     def update(self, *args):
+        self.player_collisions()
+        #self.enemy_collisions()
         for group in self.__groups:
             group.update(*args)
             
@@ -120,11 +126,56 @@ class Level(object):
                 surface.blit(sprite.image, rect.move(*loc))
         # blit player
         surface.blit(self.player.sprite.image, rect)
+            
+    def player_collisions(self):
+        player = self.player.sprite
+        #constrain to screen
+        tmp_rect = player.rect.move( player.speed*(player.movement['right']-player.movement['left']), player.speed*(player.movement['down']-player.movement['up']) )
+        if not( player.constraint.contains( tmp_rect ) ):
+            if tmp_rect.top < player.constraint.top:
+                player.movement['up'] = 0
+                player.rect.top = player.constraint.top
+            if tmp_rect.bottom > player.constraint.bottom:
+                player.movement['down'] = 0
+                player.rect.bottom = player.constraint.bottom
+            if tmp_rect.left < player.constraint.left:
+                player.movement['left'] = 0
+                player.rect.left = player.constraint.left
+            if tmp_rect.right > player.constraint.right:
+                player.movement['right'] = 0
+                player.rect.right = player.constraint.right
+                
+        tmp_list = pygame.sprite.spritecollide( player, self.walls, False, pygame.sprite.collide_rect )
+        for wall in tmp_list:
+            if player.rect.bottom > wall.rect.bottom and (wall.rect.bottom - player.rect.top) <= player.speed:
+                player.movement['up'] = 0
+                player.rect.top = wall.rect.bottom
+            if player.rect.top < wall.rect.top and (player.rect.bottom - wall.rect.top) <= player.speed:
+                player.movement['down'] = 0
+                player.rect.bottom = wall.rect.top
+            if player.rect.right > wall.rect.right and (wall.rect.right - player.rect.left) <= player.speed:
+                player.movement['left'] = 0
+                player.rect.left = wall.rect.right
+            if player.rect.left < wall.rect.left and (player.rect.right - wall.rect.left) <= player.speed:
+                player.movement['right'] = 0
+                player.rect.right = wall.rect.left
+            
+    # def enemy_collisions(self):
+        # tmp = pygame.sprite.groupcollide( self.enemies, self.walls, False, False )
+        # for enemy in self.enemies:
+            # for wall in tmp[enemy]:
+                # if enemy.rect.top < wall.rect.top:
+                    # enemy.movement['up'] = 0
+                # if enemy.rect.bottom > wall.rect.bottom:
+                    # enemy.movement['down'] = 0
+                # if enemy.rect.left < wall.rect.left:
+                    # enemy.movement['left'] = 0
+                # if enemy.rect.right > wall.rect.right:
+                    # enemy.movement['right'] = 0
 
     def clear(self):
         for group in self.__groups:
             group.clear()
-
             
     def empty(self):
         return all(g.empty() for g in self.__groups)

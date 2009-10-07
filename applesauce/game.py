@@ -38,17 +38,6 @@ class Game( object ):
         #self.lose = util.load_image( self.lose_image )
         #self.read_level( self.level_data )
 
-
-    #def add_enemy( self, line_arr ):
-        
-        
-    #def read_level( self, file_loc ):
-    #    f = open( file_loc )
-    #    for line in f:
-    #        if line != "\n":
-    #            string.replace( line, ' ', '' )
-    #            line_arr = line.split( ',' )
-
     @property
     def state(self):
         return self.__state
@@ -60,6 +49,8 @@ class Game( object ):
             self.level_config = "level_data/level0.ini"
         elif val == "splash":
             self.level_config = "level_data/splash.ini"
+        elif val == "lose":
+            pass
         elif val == "over":
             pass
         else:
@@ -82,6 +73,9 @@ class Game( object ):
         for location in self.level_config.officers():
             LOG.debug("Adding officer at %s" % str(location))
             self.level.add_enemy(1, location)
+        for location in self.level_config.walls():
+            LOG.debug("Adding wall at %s" % str(location))
+            self.level.add_wall(location)
      
     @property
     def caption(self):
@@ -90,7 +84,6 @@ class Game( object ):
     @caption.setter
     def caption(self, val):
         pygame.display.set_caption(val)
-
         
     def update( self ):
         self.clock.tick( 50 )
@@ -98,22 +91,20 @@ class Game( object ):
             self.handle_event( event )
         if self.state == 'act1' or self.state == 'act2':
             self.level.update()
-        
 
     def handle_event( self, event ):
         if event.type == pygame.QUIT:
             self.state = 'over'
         player = self.level.player.sprite
         if event.type == pygame.KEYDOWN:
-            if self.state == 'splash':
+            if event.key == pygame.K_F1:
+                self.screen = pygame.display.set_mode(settings.SCREEN_SIZE, pygame.FULLSCREEN )
+            elif event.key == pygame.K_ESCAPE and self.state != 'lose':
+                self.state = 'lose'
+            elif self.state == 'splash':
                 self.state = 'act1'
             elif self.state == 'lose':
                 self.state = 'over'
-            elif event.key == pygame.K_ESCAPE:
-                self.state = 'lose'
-            elif event.key == pygame.K_F1:
-                self.screen = pygame.display.set_mode(settings.SCREEN_SIZE,
-                                                      pygame.FULLSCREEN )
             elif event.key == pygame.K_LEFT:
                 self.level.add_boombox()
             elif event.key == pygame.K_w:
@@ -133,7 +124,6 @@ class Game( object ):
                 player.movement['left'] = 0
             elif event.key == pygame.K_d:
                 player.movement['right'] = 0
-        
 
     def draw(self):
         self.screen.fill( (50, 50, 50) )
@@ -141,7 +131,6 @@ class Game( object ):
             self.level.draw(self.screen)
         else:
             self.screen.blit(self.level.image, (0, 0))
-
         
         
 g = Game()

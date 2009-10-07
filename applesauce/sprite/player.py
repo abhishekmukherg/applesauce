@@ -14,21 +14,11 @@ class Player(pygame.sprite.Sprite):
         self.speed = 5
         self.lives = 3
         self.fliers = 10
-        self.boombox = None
-        self.turkyshake = None
+        self.boomboxes = 0
+        self.turkyshakes = 0
         
         
     def update(self):
-        tmprect = self.rect.move( self.speed*(self.movement['right']-self.movement['left']), self.speed*(self.movement['down']-self.movement['up']) )
-        if not( self.constraint.contains( tmprect ) ):
-            if tmprect.top < self.constraint.top:
-                self.movement['up'] = 0
-            if tmprect.bottom > self.constraint.bottom:
-                self.movement['down'] = 0
-            if tmprect.left < self.constraint.left:
-                self.movement['left'] = 0
-            if tmprect.right > self.constraint.right:
-                self.movement['right'] = 0
         self.rect.move_ip( self.speed*(self.movement['right']-self.movement['left']), self.speed*(self.movement['down']-self.movement['up']) )
         
     

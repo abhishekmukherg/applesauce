@@ -38,6 +38,11 @@ class LevelConfig(object):
             return tuple()
         return self.__get_list_from_section("Officers")
 
+    def walls(self):
+        if not self.config.has_section("walls"):
+            return tuple()
+        return self.__get_list_from_section("Walls")
+        
     def image(self):
         return self.config.get("LevelInfo", "image")
 
@@ -45,5 +50,3 @@ class LevelConfig(object):
         if not self.config.has_option("LevelInfo", "magic_scroll"):
             return True
         return ast.literal_eval(self.config.get("LevelInfo", "magic_scroll"))
-
-
