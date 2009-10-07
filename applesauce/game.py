@@ -1,8 +1,14 @@
+import logging
+
 import pygame
 
 from applesauce import settings
 from applesauce import level
+from applesauce import level_config
 from applesauce.sprite import util
+
+
+LOG = logging.getLogger(__name__)
 
 
 class Game( object ):
@@ -23,7 +29,9 @@ class Game( object ):
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode(settings.SCREEN_SIZE)
         self.level = level.Level(self.level1_image)
+        self.level_config = level_config.LevelConfig("level_data/level0.ini")
         self.enemy_list = []
+        self.populate_level()
         
         #self.splash = util.load_image( self.splash_image )
         #self.win = util.load_image( self.win_image )
@@ -41,11 +49,17 @@ class Game( object ):
     #            string.replace( line, ' ', '' )
     #            line_arr = line.split( ',' )
      
+    def populate_level(self):
+        for location in self.level_config.basic_enemies():
+            LOG.debug("Adding basic enemy at %s" % str(location))
+            self.level.add_enemy(0, location)
+        for location in self.level_config.officers():
+            LOG.debug("Adding officer at %s" % str(location))
+            self.level.add_enemy(1, location)
      
     @property
     def caption(self):
         return pygame.display.get_caption()
-
         
     @caption.setter
     def caption(self, val):
@@ -84,10 +98,6 @@ class Game( object ):
                 player.movement['left'] = 1
             elif event.key == pygame.K_d:
                 player.movement['right'] = 1
-            elif event.key == pygame.K_u:
-                self.level.add_enemy(0)
-            elif event.key == pygame.K_i:
-                self.level.add_enemy(1)
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
                 player.movement['up'] = 0
