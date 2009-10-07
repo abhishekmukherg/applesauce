@@ -72,11 +72,13 @@ class Level(object):
 
         """
         if level == 0:
-            self.enemies.add(enemies.BasicEnemy())
+            enemy = enemies.BasicEnemy()
         elif level == 1:
-            self.enemies.add(enemies.Officer())
+            enemy = enemies.Officer()
         else:
             raise InvalidEnemyException(level, 1)
+        enemy.rect.topleft = location
+        self.enemies.add(enemy)
     
     def remove(self, *sprites):
         for sprite_iter in sprites:
@@ -99,11 +101,9 @@ class Level(object):
                     return False
         return True
 
-        
     def update(self, *args):
         for group in self.__groups:
             group.update(*args)
-
             
     def draw(self, surface):
         # Find location for player
@@ -115,6 +115,8 @@ class Level(object):
             -self.player.sprite.rect.top))
         for group in (self.others, self.enemies):
             for sprite in group:
+                loc = (-player_rect.left + sprite.rect.left,
+                        -player_rect.top + sprite.rect.top)
                 surface.blit(sprite.image, rect.move(
                     -player_rect.left + sprite.rect.left,
                     -player_rect.top + sprite.rect.top))
