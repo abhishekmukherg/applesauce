@@ -121,7 +121,6 @@ class Level(object):
         # blit player
         surface.blit(self.player.sprite.image, rect)
 
-        
     def clear(self):
         for group in self.__groups:
             group.clear()
@@ -130,7 +129,6 @@ class Level(object):
     def empty(self):
         return all(g.empty() for g in self.__groups)
 
-        
     def __in__(self, obj):
         return self.has(obj)
 
