@@ -56,7 +56,7 @@ class Game( object ):
         elif val == "info3":
             self.level_config = "level_data/info3.ini"
         elif val == "lose":
-            pass
+            self.level_config = "level_data/gameover.ini"
         elif val == "over":
             pass
         else:
@@ -113,7 +113,7 @@ class Game( object ):
                 self.state = 'info2'
             elif self.state == 'info2':
                 self.state = 'info3'
-            elif self.state == 'infor3':
+            elif self.state == 'info3':
                 self.state = 'act1'
             elif self.state == 'lose':
                 self.state = 'over'
