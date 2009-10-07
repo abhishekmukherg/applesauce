@@ -117,9 +117,7 @@ class Level(object):
             for sprite in group:
                 loc = (-player_rect.left + sprite.rect.left,
                         -player_rect.top + sprite.rect.top)
-                surface.blit(sprite.image, rect.move(
-                    -player_rect.left + sprite.rect.left,
-                    -player_rect.top + sprite.rect.top))
+                surface.blit(sprite.image, rect.move(*loc))
         # blit player
         surface.blit(self.player.sprite.image, rect)
 
