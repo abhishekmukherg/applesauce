@@ -29,9 +29,13 @@ class LevelConfig(object):
 
     def basic_enemies(self):
         """Returns a generator of locations for basic enemies"""
+        if not self.config.has_section("BasicEnemies"):
+            return tuple()
         return self.__get_list_from_section("BasicEnemies")
 
     def officers(self):
+        if not self.config.has_section("Officers"):
+            return tuple()
         return self.__get_list_from_section("Officers")
 
     def image(self):

@@ -11,18 +11,27 @@ from applesauce.sprite import util
 LOG = logging.getLogger(__name__)
 
 
+class InvalidStateException(Exception):
+    
+    def __init__(self, state):
+        self.state = state
+
+    def __unicode__(self):
+        return unicode(self.state)
+
+    def __str__(self):
+        return str(unicode(self))
+
+
 class Game( object ):
     def __init__( self ):
         pygame.init()
         self.caption = settings.CAPTION
         
-        self.state = 'splash'
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode(settings.SCREEN_SIZE)
         self.level = None
-        self.level_config = "level_data/level0.ini"
-        self.enemy_list = []
-        self.populate_level()
+        self.state = 'splash'
         
         #self.splash = util.load_image( self.splash_image )
         #self.win = util.load_image( self.win_image )
@@ -41,6 +50,22 @@ class Game( object ):
     #            line_arr = line.split( ',' )
 
     @property
+    def state(self):
+        return self.__state
+
+    @state.setter
+    def state(self, val):
+        self.__state = val
+        if val == "act1":
+            self.level_config = "level_data/level0.ini"
+        elif val == "splash":
+            self.level_config = "level_data/splash.ini"
+        elif val == "over":
+            pass
+        else:
+            raise InvalidStateException(val)
+
+    @property
     def level_config(self):
         return self.__level_config
 
@@ -48,6 +73,7 @@ class Game( object ):
     def level_config(self, val):
         self.__level_config = level_config.LevelConfig(val)
         self.level = level.Level(self.level_config.image())
+        self.populate_level()
 
     def populate_level(self):
         for location in self.level_config.basic_enemies():
