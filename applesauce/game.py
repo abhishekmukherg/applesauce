@@ -49,6 +49,12 @@ class Game( object ):
             self.level_config = "level_data/level0.ini"
         elif val == "splash":
             self.level_config = "level_data/splash.ini"
+        elif val == "info1":
+            self.level_config = "level_data/info1.ini"
+        elif val == "info2":
+            self.level_config = "level_data/info2.ini"
+        elif val == "info3":
+            self.level_config = "level_data/info3.ini"
         elif val == "lose":
             pass
         elif val == "over":
@@ -102,6 +108,12 @@ class Game( object ):
             elif event.key == pygame.K_ESCAPE and self.state != 'lose':
                 self.state = 'lose'
             elif self.state == 'splash':
+                self.state = 'info1'
+            elif self.state == 'info1':
+                self.state = 'info2'
+            elif self.state == 'info2':
+                self.state = 'info3'
+            elif self.state == 'infor3':
                 self.state = 'act1'
             elif self.state == 'lose':
                 self.state = 'over'
