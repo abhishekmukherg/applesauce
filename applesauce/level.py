@@ -3,6 +3,7 @@ import itertools
 
 import pygame
 
+from applesauce import settings
 from applesauce.sprite import util
 from applesauce.sprite import player
 from applesauce.sprite import boombox
@@ -76,9 +77,19 @@ class Level(object):
 
             
     def draw(self, surface):
-        surface.blit(self.image, self.rect)
-        self.player.draw(surface)
-        self.others.draw(surface)
+        # Find location for player
+        player_rect = self.player.sprite.rect
+        rect = copy.copy(player_rect)
+        rect.center = map(lambda x: x // 2, settings.SCREEN_SIZE)
+        # blit background
+        surface.blit(self.image, rect.move(-self.player.sprite.rect.left,
+            -self.player.sprite.rect.top))
+        for sprite in self.others:
+            surface.blit(sprite.image, rect.move(
+                -player_rect.left + sprite.rect.left,
+                -player_rect.top + sprite.rect.top))
+        # blit player
+        surface.blit(self.player.sprite.image, rect)
 
         
     def clear(self):
