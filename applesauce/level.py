@@ -106,10 +106,10 @@ class Level(object):
         return True
 
     def update(self, *args):
-        self.player_collisions()
         #self.enemy_collisions()
         for group in self.__groups:
             group.update(*args)
+        self.player_collisions()
             
     def draw(self, surface):
         # Find location for player
@@ -133,31 +133,23 @@ class Level(object):
         tmp_rect = player.rect.move( player.speed*(player.movement['right']-player.movement['left']), player.speed*(player.movement['down']-player.movement['up']) )
         if not( player.constraint.contains( tmp_rect ) ):
             if tmp_rect.top < player.constraint.top:
-                player.movement['up'] = 0
                 player.rect.top = player.constraint.top
             if tmp_rect.bottom > player.constraint.bottom:
-                player.movement['down'] = 0
                 player.rect.bottom = player.constraint.bottom
             if tmp_rect.left < player.constraint.left:
-                player.movement['left'] = 0
                 player.rect.left = player.constraint.left
             if tmp_rect.right > player.constraint.right:
-                player.movement['right'] = 0
                 player.rect.right = player.constraint.right
                 
         tmp_list = pygame.sprite.spritecollide( player, self.walls, False, pygame.sprite.collide_rect )
         for wall in tmp_list:
             if player.rect.bottom > wall.rect.bottom and (wall.rect.bottom - player.rect.top) <= player.speed:
-                player.movement['up'] = 0
                 player.rect.top = wall.rect.bottom
             if player.rect.top < wall.rect.top and (player.rect.bottom - wall.rect.top) <= player.speed:
-                player.movement['down'] = 0
                 player.rect.bottom = wall.rect.top
             if player.rect.right > wall.rect.right and (wall.rect.right - player.rect.left) <= player.speed:
-                player.movement['left'] = 0
                 player.rect.left = wall.rect.right
             if player.rect.left < wall.rect.left and (player.rect.right - wall.rect.left) <= player.speed:
-                player.movement['right'] = 0
                 player.rect.right = wall.rect.left
             
     # def enemy_collisions(self):

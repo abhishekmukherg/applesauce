@@ -39,7 +39,7 @@ class LevelConfig(object):
         return self.__get_list_from_section("Officers")
 
     def walls(self):
-        if not self.config.has_section("walls"):
+        if not self.config.has_section("Walls"):
             return tuple()
         return self.__get_list_from_section("Walls")
         
