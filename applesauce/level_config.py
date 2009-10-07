@@ -41,3 +41,9 @@ class LevelConfig(object):
     def image(self):
         return self.config.get("LevelInfo", "image")
 
+    def magic_scroll(self):
+        if not self.config.has_option("LevelInfo", "magic_scroll"):
+            return True
+        return ast.literal_eval(self.config.get("LevelInfo", "magic_scroll"))
+
+

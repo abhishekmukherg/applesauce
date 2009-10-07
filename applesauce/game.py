@@ -137,24 +137,10 @@ class Game( object ):
 
     def draw(self):
         self.screen.fill( (50, 50, 50) )
-        
-        #draw splash screen
-        #if self.state == 'splash':
-        #    
-        #draw win screen
-        #elif self.state == 'win':
-        #
-        #draw lose screen
-        #elif self.state == 'lose':
-        #
-        #draw main game
-        if self.state == 'act1': #else:
-            #draw background
+        if self.level_config.magic_scroll():
             self.level.draw(self.screen)
-            #draw player
-            #draw enemies
-            #for enemy in self.enemy_list:
-            #    enemy.draw(self.screen)
+        else:
+            self.screen.blit(self.level.image, (0, 0))
 
         
         
