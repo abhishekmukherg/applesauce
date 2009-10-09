@@ -3,7 +3,6 @@ import pygame
 
 class Boombox(pygame.sprite.Sprite):
     
-    
     def __init__(self, center, *groups):
         pygame.sprite.Sprite.__init__( self, *groups )
         self.rect = pygame.Rect( 0, 0, 10, 14 )
@@ -33,7 +32,6 @@ class Boombox(pygame.sprite.Sprite):
         self.time -= 1
         if self.time == 0:
             self.kill()
-        
     
     def draw(self, screen):
         screen.blit( self.image, self.rect )

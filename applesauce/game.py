@@ -24,6 +24,7 @@ class InvalidStateException(Exception):
 
 
 class Game( object ):
+
     def __init__( self ):
         pygame.init()
         self.caption = settings.CAPTION
@@ -119,6 +120,8 @@ class Game( object ):
                 self.state = 'over'
             elif event.key == pygame.K_LEFT:
                 self.level.add_boombox()
+            elif event.key == pygame.K_UP:
+                self.level.add_flyer()
             elif event.key == pygame.K_w:
                 player.movement['up'] = 1
             elif event.key == pygame.K_s:

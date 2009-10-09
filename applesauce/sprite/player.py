@@ -1,8 +1,8 @@
 import pygame
+import math
 
 
 class Player(pygame.sprite.Sprite):
-    
     
     def __init__(self, constraint, *groups):
         pygame.sprite.Sprite.__init__( self, *groups )
@@ -13,12 +13,35 @@ class Player(pygame.sprite.Sprite):
         self.facing = 'right'
         self.speed = 5
         self.lives = 3
-        self.fliers = 10
+        self.flyers = 10
         self.boomboxes = 0
         self.turkyshakes = 0
+        self.contacting = ''
         
         
     def update(self):
+        lr = False
+        if self.movement['left'] == 1 and self.movement['right'] == 0:
+            self.facing = 'left'
+            lr = True
+        elif self.movement['right'] == 1 and self.movement['left'] == 0:
+            self.facing = 'right'
+            lr = True
+        if self.movement['up'] == 1 and self.movement['down'] == 0:
+            if lr:
+                self.facing += 'up'
+            else:
+                self.facing = 'up'
+        if self.movement['down'] == 1 and self.movement['up'] == 0:
+            if lr:
+                self.facing += 'down'
+            else:
+                self.facing = 'down'
+                
+        self.speed = 5
+        if self.movement['up'] ^ self.movement['down'] == 1 and self.movement['left'] ^ self.movement['right'] == 1:
+            self.speed = math.sqrt(12.5)
+        
         self.rect.move_ip( self.speed*(self.movement['right']-self.movement['left']), self.speed*(self.movement['down']-self.movement['up']) )
         
     

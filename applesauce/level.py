@@ -9,6 +9,7 @@ from applesauce.sprite import player
 from applesauce.sprite import enemies
 from applesauce.sprite import boombox
 from applesauce.sprite import wall
+from applesauce.sprite import flyer
 
 
 class InvalidEnemyException(IndexError):
@@ -58,13 +59,22 @@ class Level(object):
                 new_level.walls, new_level.pickups, new_level.others)
         return new_level
         
-    def add(self, *sprites):
-        self.others.add(*sprites)
-        
     def add_boombox(self):
         if self.player.sprite.boomboxes > 0:
-            self.add( boombox.Boombox( self.player.sprite.rect.center ) )
+            self.others.add( boombox.Boombox( self.player.sprite.rect.center ) )
             self.player.sprite.boomboxes -= 1
+            
+    def add_flyer(self):
+        if self.player.sprite.flyers > 0:
+            if self.player.sprite.contacting == 'up':
+                self.others.add( flyer.Flyer( self.player.sprite.rect.midtop, 'down' ) )
+            elif self.player.sprite.contacting == 'down':
+                self.others.add( flyer.Flyer( self.player.sprite.rect.midbottom, 'up' ) )
+            elif self.player.sprite.contacting == 'left':
+                self.others.add( flyer.Flyer( self.player.sprite.rect.midleft, 'right' ) )
+            elif self.player.sprite.contacting == 'right':
+                self.others.add( flyer.Flyer( self.player.sprite.rect.midright, 'left' ) )
+            self.player.sprite.flyers -= 1
             
     def add_wall(self, location = (0,0,0,0)):
         self.walls.add( wall.Wall( location[0], location[1], location[2], location[3] ) )
@@ -129,6 +139,7 @@ class Level(object):
             
     def player_collisions(self):
         player = self.player.sprite
+        player.contacting = ''
         #constrain to screen
         tmp_rect = player.rect.move( player.speed*(player.movement['right']-player.movement['left']), player.speed*(player.movement['down']-player.movement['up']) )
         if not( player.constraint.contains( tmp_rect ) ):
@@ -145,12 +156,20 @@ class Level(object):
         for wall in tmp_list:
             if player.rect.bottom > wall.rect.bottom and (wall.rect.bottom - player.rect.top) <= player.speed:
                 player.rect.top = wall.rect.bottom
+                if player.facing.endswith( 'up' ) == True and player.rect.right <= wall.rect.right and player.rect.left >= wall.rect.left:
+                    player.contacting = 'up'
             if player.rect.top < wall.rect.top and (player.rect.bottom - wall.rect.top) <= player.speed:
                 player.rect.bottom = wall.rect.top
+                if player.facing.endswith( 'down' ) == True and player.rect.right <= wall.rect.right and player.rect.left >= wall.rect.left:
+                    player.contacting = 'down'
             if player.rect.right > wall.rect.right and (wall.rect.right - player.rect.left) <= player.speed:
                 player.rect.left = wall.rect.right
+                if player.facing.startswith( 'left' ) == True and player.rect.bottom <= wall.rect.bottom and player.rect.top >= wall.rect.top:
+                    player.contacting = 'left'
             if player.rect.left < wall.rect.left and (player.rect.right - wall.rect.left) <= player.speed:
                 player.rect.right = wall.rect.left
+                if player.facing.startswith( 'right' ) == True and player.rect.bottom <= wall.rect.bottom and player.rect.top >= wall.rect.top:
+                    player.contacting = 'right'
             
     # def enemy_collisions(self):
         # tmp = pygame.sprite.groupcollide( self.enemies, self.walls, False, False )
@@ -174,11 +193,9 @@ class Level(object):
 
     def __in__(self, obj):
         return self.has(obj)
-
         
     def __len__(self):
         return sum(len(g) for g in self.__groups)
-
         
     def __iter__(self):
         return itertools.chain(*self.__groups)
