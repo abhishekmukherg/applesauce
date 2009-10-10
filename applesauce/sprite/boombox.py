@@ -4,6 +4,7 @@ import pygame
 class Boombox(pygame.sprite.Sprite):
     
     def __init__(self, center, *groups):
+        self.type = 'boombox'
         pygame.sprite.Sprite.__init__( self, *groups )
         self.rect = pygame.Rect( 0, 0, 10, 14 )
         self.bar = pygame.Surface( ( 10, 2 ) )

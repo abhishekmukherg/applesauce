@@ -4,6 +4,7 @@ import pygame
 class Flyer(pygame.sprite.Sprite):
     
     def __init__(self, location, direction, *groups):
+        self.type = 'flyer'
         pygame.sprite.Sprite.__init__( self, *groups )
         if direction == 'up':
             self.image = pygame.Surface( ( 10, 3 ) )

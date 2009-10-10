@@ -10,6 +10,7 @@ from applesauce.sprite import enemies
 from applesauce.sprite import boombox
 from applesauce.sprite import wall
 from applesauce.sprite import flyer
+from applesauce.sprite import turkeyshake
 
 
 class InvalidEnemyException(IndexError):
@@ -45,6 +46,8 @@ class Level(object):
 
         self.__groups = (self.player, self.enemies, self.walls, self.others)
         
+        self.draw_walls = False
+        
     def sprites(self):
         return tuple(itertools.chain(*self.__groups))
         
@@ -62,7 +65,7 @@ class Level(object):
     def add_boombox(self):
         if self.player.sprite.boomboxes > 0:
             self.others.add( boombox.Boombox( self.player.sprite.rect.center ) )
-            self.player.sprite.boomboxes -= 1
+            #self.player.sprite.boomboxes -= 1
             
     def add_flyer(self):
         if self.player.sprite.flyers > 0:
@@ -74,10 +77,15 @@ class Level(object):
                 self.others.add( flyer.Flyer( self.player.sprite.rect.midleft, 'right' ) )
             elif self.player.sprite.contacting == 'right':
                 self.others.add( flyer.Flyer( self.player.sprite.rect.midright, 'left' ) )
-            self.player.sprite.flyers -= 1
+            #self.player.sprite.flyers -= 1
             
     def add_wall(self, location = (0,0,0,0)):
         self.walls.add( wall.Wall( location[0], location[1], location[2], location[3] ) )
+        
+    def add_turkeyshake(self):
+        if self.player.sprite.turkeyshakes > 0:
+            self.others.add( turkeyshake.Turkeyshake( self.player.sprite.rect.center, self.player.sprite.facing ) )
+            #self.player.sprite.turkeyshakes -= 1
 
     def add_enemy(self, level, location=(0, 0)):
         """Adds an anemy to the level
@@ -120,6 +128,7 @@ class Level(object):
         for group in self.__groups:
             group.update(*args)
         self.player_collisions()
+        self.other_collisions()
             
     def draw(self, surface):
         # Find location for player
@@ -129,11 +138,19 @@ class Level(object):
         # blit background
         surface.blit(self.image, rect.move(-self.player.sprite.rect.left,
             -self.player.sprite.rect.top))
-        for group in (self.others, self.enemies):
-            for sprite in group:
-                loc = (-player_rect.left + sprite.rect.left,
-                        -player_rect.top + sprite.rect.top)
-                surface.blit(sprite.image, rect.move(*loc))
+        if self.draw_walls == True:
+            for group in (self.others, self.enemies, self.walls):
+                for sprite in group:
+                    loc = (-player_rect.left + sprite.rect.left,
+                            -player_rect.top + sprite.rect.top)
+                    surface.blit(sprite.image, rect.move(*loc))
+        else:
+            for group in (self.others, self.enemies):
+                for sprite in group:
+                    loc = (-player_rect.left + sprite.rect.left,
+                            -player_rect.top + sprite.rect.top)
+                    surface.blit(sprite.image, rect.move(*loc))
+            
         # blit player
         surface.blit(self.player.sprite.image, rect)
             
@@ -183,6 +200,11 @@ class Level(object):
                     # enemy.movement['left'] = 0
                 # if enemy.rect.right > wall.rect.right:
                     # enemy.movement['right'] = 0
+                    
+    def other_collisions(self):
+        for other in self.others:
+            if other.type == 'turkeyshake' and pygame.sprite.spritecollideany( other, self.walls ):
+                other.explode()
 
     def clear(self):
         for group in self.__groups:

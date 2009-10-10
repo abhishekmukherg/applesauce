@@ -126,6 +126,13 @@ class Game( object ):
                 self.level.add_boombox()
             elif event.key == pygame.K_UP:
                 self.level.add_flyer()
+            elif event.key == pygame.K_DOWN:
+                self.level.add_turkeyshake()
+            elif event.key == pygame.K_RIGHT:
+                if self.level.draw_walls:
+                    self.level.draw_walls = False
+                else:
+                    self.level.draw_walls = True
             elif event.key == pygame.K_w:
                 player.movement['up'] = 1
             elif event.key == pygame.K_s:

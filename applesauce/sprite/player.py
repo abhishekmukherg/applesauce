@@ -14,8 +14,8 @@ class Player(pygame.sprite.Sprite):
         self.speed = 5
         self.lives = 3
         self.flyers = 10
-        self.boomboxes = 0
-        self.turkyshakes = 0
+        self.boomboxes = 10
+        self.turkeyshakes = 10
         self.contacting = ''
         
         
@@ -40,7 +40,7 @@ class Player(pygame.sprite.Sprite):
                 
         self.speed = 5
         if self.movement['up'] ^ self.movement['down'] == 1 and self.movement['left'] ^ self.movement['right'] == 1:
-            self.speed = math.sqrt(12.5)
+            self.speed = math.sqrt( 12.5 )
         
         self.rect.move_ip( self.speed*(self.movement['right']-self.movement['left']), self.speed*(self.movement['down']-self.movement['up']) )
         
