@@ -58,6 +58,8 @@ class Game( object ):
             self.level_config = "level_data/info3.ini"
         elif val == "lose":
             self.level_config = "level_data/gameover.ini"
+        elif val == "win":
+            self.levl_config = "level_data/victory.ini"
         elif val == "over":
             pass
         else:
@@ -117,6 +119,8 @@ class Game( object ):
             elif self.state == 'info3':
                 self.state = 'act1'
             elif self.state == 'lose':
+                self.state = 'over'
+            elif self.state == 'win':
                 self.state = 'over'
             elif event.key == pygame.K_LEFT:
                 self.level.add_boombox()
