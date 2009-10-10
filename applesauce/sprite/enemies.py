@@ -36,7 +36,38 @@ class Enemy(pygame.sprite.Sprite):
 
     @staticmethod
     def _obstructs_los(rect, start, end):
-        pass
+        start_sec = Enemy._get_section(rect, start)
+        end_sec = Enemy._get_section(rect, end)
+        visibles = {0: set((0, 1, 2, 3, 6)),
+                    1: set((0, 1, 2)),
+                    2: set((0, 1, 2, 5, 8)),
+                    3: set((0, 3, 6)),
+                    4: set(),
+                    5: set((2, 5, 8)),
+                    6: set((0, 3, 6, 7, 8)),
+                    7: set((6, 7, 8)),
+                    8: set((7, 8, 9, 2, 5)),
+                    }
+        return end_sec not in visibles[start_sec]
+
+    @staticmethod
+    def _get_section(rect, point):
+        val = 0
+        # column
+        if point[0] < rect.left:
+            val += 0
+        elif point[0] < rect.right:
+            val += 1
+        else:
+            val += 2
+        # row
+        if point[1] < rect.top:
+            val += 0
+        elif point[1] < rect.bottom:
+            val += 3
+        else:
+            val += 6
+        return val
 
 
 class BasicEnemy(Enemy):
@@ -55,3 +86,6 @@ class Officer(Enemy):
         self.image = pygame.Surface((25, 25))
         self.image.fill((100, 100, 100))
         self.rect = self.image.get_rect()
+
+import doctest
+doctest.testmod()
