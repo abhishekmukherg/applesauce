@@ -14,6 +14,7 @@ setup(name="applesauce",
         install_requires = ['pygame'],
         package_data = {
             'gummy_panzer': ['images/*.png'],
-        }
+        },
+        test_suite="tests.suite",
 )
 
