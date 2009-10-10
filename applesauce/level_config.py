@@ -26,6 +26,11 @@ class LevelConfig(object):
     def __get_list_from_section(self, section):
         locations = imap(operator.itemgetter(1), self.config.items(section))
         return imap(ast.literal_eval, locations)
+        
+    def player(self):
+        if not self.config.has_section("Player"):
+            return tuple()
+        return self.__get_list_from_section("Player")
 
     def basic_enemies(self):
         """Returns a generator of locations for basic enemies"""

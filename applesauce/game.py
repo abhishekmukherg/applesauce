@@ -76,6 +76,9 @@ class Game( object ):
         self.populate_level()
 
     def populate_level(self):
+        for location in self.level_config.player():
+            LOG.debug("Adding player at %s" %str(location))
+            self.level.add_player(location)
         for location in self.level_config.basic_enemies():
             LOG.debug("Adding basic enemy at %s" % str(location))
             self.level.add_enemy(0, location)
@@ -141,7 +144,7 @@ class Game( object ):
                 player.movement['left'] = 1
             elif event.key == pygame.K_d:
                 player.movement['right'] = 1
-        elif event.type == pygame.KEYUP:
+        elif event.type == pygame.KEYUP and (self.state == 'act1' or self.state == 'act2'):
             if event.key == pygame.K_w:
                 player.movement['up'] = 0
             elif event.key == pygame.K_s:

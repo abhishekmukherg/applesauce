@@ -4,7 +4,7 @@ import math
 
 class Player(pygame.sprite.Sprite):
     
-    def __init__(self, constraint, *groups):
+    def __init__(self, location, constraint, *groups):
         pygame.sprite.Sprite.__init__( self, *groups )
         self.image = pygame.Surface( ( 50, 50 ) )
         self.rect = self.image.get_rect()
@@ -17,6 +17,8 @@ class Player(pygame.sprite.Sprite):
         self.boomboxes = 10
         self.turkeyshakes = 10
         self.contacting = ''
+        
+        self.rect.center = location
         
         
     def update(self):

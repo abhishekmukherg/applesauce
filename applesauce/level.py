@@ -37,8 +37,7 @@ class Level(object):
         self.rect = self.image.get_rect()
         self.__image_name = image
 
-        self.player = pygame.sprite.GroupSingle(player.Player(self.rect))
-
+        self.player = pygame.sprite.GroupSingle()
         self.enemies = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
         self.pickups = pygame.sprite.Group()
@@ -78,14 +77,17 @@ class Level(object):
             elif self.player.sprite.contacting == 'right':
                 self.others.add( flyer.Flyer( self.player.sprite.rect.midright, 'left' ) )
             #self.player.sprite.flyers -= 1
-            
-    def add_wall(self, location = (0,0,0,0)):
-        self.walls.add( wall.Wall( location[0], location[1], location[2], location[3] ) )
         
     def add_turkeyshake(self):
         if self.player.sprite.turkeyshakes > 0:
             self.others.add( turkeyshake.Turkeyshake( self.player.sprite.rect.center, self.player.sprite.facing ) )
             #self.player.sprite.turkeyshakes -= 1
+            
+    def add_player(self, location = (0,0,0,0)):
+        self.player.sprite = player.Player( location, self.rect )
+            
+    def add_wall(self, location = (0,0,0,0)):
+        self.walls.add( wall.Wall( location[0], location[1], location[2], location[3] ) )
 
     def add_enemy(self, level, location=(0, 0)):
         """Adds an anemy to the level
