@@ -141,17 +141,18 @@ class Level(object):
         # blit background
         surface.blit(self.image, rect.move(-self.player.sprite.rect.left,
             -self.player.sprite.rect.top))
-        if self.draw_walls == True:
-            for group in (self.others, self.enemies, self.walls):
-                for sprite in group:
-                    loc = (-player_rect.left + sprite.rect.left,
-                            -player_rect.top + sprite.rect.top)
-                    surface.blit(sprite.image, rect.move(*loc))
-        else:
-            for group in (self.others, self.enemies):
-                for sprite in group:
-                    loc = (-player_rect.left + sprite.rect.left,
-                            -player_rect.top + sprite.rect.top)
+        groups = [self.others, self.enemies]
+        if self.draw_walls:
+            groups.append(self.walls)
+        for group in groups:
+            for sprite in group:
+                loc = (-player_rect.left + sprite.rect.left,
+                        -player_rect.top + sprite.rect.top)
+                if hasattr(sprite, 'draw_area'):
+                    surface.blit(sprite.image,
+                            rect.move(*loc),
+                            sprite.draw_area)
+                else:
                     surface.blit(sprite.image, rect.move(*loc))
             
         # blit player
