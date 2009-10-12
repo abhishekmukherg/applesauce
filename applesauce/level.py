@@ -156,7 +156,9 @@ class Level(object):
                     surface.blit(sprite.image, rect.move(*loc))
             
         # blit player
-        surface.blit(self.player.sprite.image, rect)
+        surface.blit(self.player.sprite.image,
+                rect,
+                self.player.sprite.draw_area)
             
     def player_collisions(self):
         player = self.player.sprite
