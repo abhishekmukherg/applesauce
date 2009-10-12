@@ -2,9 +2,13 @@ from __future__ import division
 
 import pygame
 import weakref
+import logging
 import math
 
 from applesauce import settings
+
+
+LOG = logging.getLogger(__name__)
 
 
 class PlayerNotFoundException(Exception):
@@ -53,6 +57,12 @@ class Enemy(pygame.sprite.Sprite):
             raise PlayerNotFoundException
         if self.walls is None:
             raise WallsNotFoundException
+        distance_vector = (self.player.rect.center[0] - self.rect.center[0],
+                           self.player.rect.center[1] - self.rect.center[1])
+        distance = math.sqrt(distance_vector[0] * distance_vector[0] +
+                             distance_vector[1] * distance_vector[1])
+        if distance > settings.OFFICER_VIEW_DISTANCE:
+            return False
         return not any(
             self._obstructs_los(
                 x.rect,
@@ -115,8 +125,22 @@ class Enemy(pygame.sprite.Sprite):
     def walk_towards_player(self):
         """Walk towards the player at rate self.max_v"""
         vector = self._vector_towards_player()
-        self.rect.move_ip(*vector)
-
+        tmp_rect = self.rect
+        self.rect = self.rect.move(*vector)
+        collided = pygame.sprite.spritecollide(self, self.walls, False)
+        for sprite in collided:
+            if (self.rect.top < sprite.rect.bottom and
+                    tmp_rect.top >= sprite.rect.bottom):
+                self.rect.top = sprite.rect.bottom
+            if (self.rect.left < sprite.rect.right and
+                    tmp_rect.left >= sprite.rect.right):
+                self.rect.left = sprite.rect.right
+            if (self.rect.bottom > sprite.rect.top and
+                    tmp_rect.bottom <= sprite.rect.top):
+                self.rect.bottom = sprite.rect.top
+            if (self.rect.right > sprite.rect.left and
+                    tmp_rect.right <= sprite.rect.left):
+                self.rect.right = sprite.rect.left
 
 class BasicEnemy(Enemy):
     
@@ -127,6 +151,7 @@ class BasicEnemy(Enemy):
         self.rect = self.image.get_rect()
 
 
+
 class Officer(Enemy):
 
     def __init__(self, player, walls, *groups):
@@ -134,8 +159,31 @@ class Officer(Enemy):
         self.image = pygame.Surface((25, 25))
         self.image.fill((100, 100, 100))
         self.rect = self.image.get_rect()
+        self.time_till_lost = 0
+
+    @property
+    def time_till_lost(self):
+        return self._time_till_lost
+
+    @time_till_lost.setter
+    def time_till_lost(self, val):
+        self._time_till_lost = val
+        if self._time_till_lost <= 0:
+            self.allerted = False
+        else:
+            self.allerted = True
 
     def update(self):
-        if self.can_see_player():
-            self.allerted = True
-            self.walk_towards_player()
+        can_see_player = self.can_see_player()
+        # Reduce time_till lost if can't see player
+        if not can_see_player and self.allerted:
+            self.time_till_lost -= 1
+
+        # the officer has no idea the player exists
+        if not can_see_player and not self.allerted:
+            return
+
+        if can_see_player:
+            self.time_till_lost = settings.TIME_UNTIL_OFFICER_LOST
+
+        self.walk_towards_player()
