@@ -1,4 +1,5 @@
 import pygame
+import util
 
 
 class Flyer(pygame.sprite.Sprite):
@@ -7,17 +8,21 @@ class Flyer(pygame.sprite.Sprite):
         self.type = 'flyer'
         pygame.sprite.Sprite.__init__( self, *groups )
         if direction == 'up':
-            self.image = pygame.Surface( ( 10, 3 ) )
+            self.image = pygame.Surface( ( 20, 3 ) )
+            self.image.fill( ( 255, 255, 255 ) )    
         elif direction == 'down':
-            self.image = pygame.Surface( ( 10, 3 ) )
+            self.image = util.load_image( "flyer.png" )
         elif direction == 'left':
-            self.image = pygame.Surface( ( 3, 10 ) )
+            self.image = pygame.Surface( ( 3, 20 ) )
+            self.image.fill( ( 255, 255, 255 ) )    
         elif direction == 'right':
-            self.image = pygame.Surface( ( 3, 10 ) )
-        self.image.fill( ( 0, 255, 255 ) )
+            self.image = pygame.Surface( ( 3, 20 ) )
+            self.image.fill( ( 255, 255, 255 ) )    
         self.rect = self.image.get_rect()
-        
-        self.rect.center = location
+        if direction == 'down':
+            self.rect.midbottom = location
+        else:
+            self.rect.center = location
         
     def update(self):
         pass

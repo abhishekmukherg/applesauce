@@ -65,7 +65,7 @@ class Level(object):
     def add_boombox(self):
         if self.player.sprite.boomboxes > 0:
             self.others.add( boombox.Boombox( self.player.sprite.rect.center ) )
-            self.player.sprite.boomboxes -= 1
+            #self.player.sprite.boomboxes -= 1
             
     def add_flyer(self):
         if self.player.sprite.flyers > 0:
@@ -82,7 +82,7 @@ class Level(object):
     def add_turkeyshake(self):
         if self.player.sprite.turkeyshakes > 0:
             self.others.add( turkeyshake.Turkeyshake( self.player.sprite.rect.center, self.player.sprite.facing ) )
-            self.player.sprite.turkeyshakes -= 1
+            #self.player.sprite.turkeyshakes -= 1
             
     def add_player(self, location = (0,0), flyers = 0, bombs = 0, boomboxes = 0, turkeyshakes = 0):
         self.player.sprite = player.Player( location, self.rect, flyers, bombs, boomboxes, turkeyshakes )

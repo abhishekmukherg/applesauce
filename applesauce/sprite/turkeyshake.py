@@ -1,5 +1,6 @@
 import pygame
 import math
+import util
 
 
 class Turkeyshake(pygame.sprite.Sprite):
@@ -8,8 +9,7 @@ class Turkeyshake(pygame.sprite.Sprite):
         self.type = 'turkeyshake'
         pygame.sprite.Sprite.__init__( self, *groups )
         self.movement = { 'up':0, 'down':0, 'left':0, 'right':0 }
-        self.image = pygame.Surface( ( 10, 20 ) )
-        self.image.fill( ( 255, 100, 0 ) )
+        self.image = util.load_image( "smoothie_Turkey.png" )
         self.rect = self.image.get_rect()
         self.time = 30
         self.exploded = False

@@ -1,13 +1,13 @@
 import pygame
 import math
+import effects
+import util
 
 
-class Player(pygame.sprite.Sprite):
+class Player(effects.SpriteSheet):
     
     def __init__(self, location, constraint, flyers, bombs, boomboxes, turkeyshakes, *groups):
-        pygame.sprite.Sprite.__init__( self, *groups )
-        self.image = pygame.Surface( ( 50, 50 ) )
-        self.rect = self.image.get_rect()
+        effects.SpriteSheet.__init__(self, util.load_image( "playerMove_sheet.png" ), (60,90) )
         self.constraint = constraint
         self.movement = { 'up':0, 'down':0, 'left':0, 'right':0 }
         self.facing = 'right'
