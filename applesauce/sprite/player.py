@@ -4,7 +4,7 @@ import math
 
 class Player(pygame.sprite.Sprite):
     
-    def __init__(self, location, constraint, *groups):
+    def __init__(self, location, constraint, flyers, bombs, boomboxes, turkeyshakes, *groups):
         pygame.sprite.Sprite.__init__( self, *groups )
         self.image = pygame.Surface( ( 50, 50 ) )
         self.rect = self.image.get_rect()
@@ -12,10 +12,10 @@ class Player(pygame.sprite.Sprite):
         self.movement = { 'up':0, 'down':0, 'left':0, 'right':0 }
         self.facing = 'right'
         self.speed = 5
-        self.lives = 3
-        self.flyers = 10
-        self.boomboxes = 10
-        self.turkeyshakes = 10
+        self.flyers = flyers
+        self.bombs = bombs
+        self.boomboxes = boomboxes
+        self.turkeyshakes = turkeyshakes
         self.contacting = ''
         
         self.rect.center = location

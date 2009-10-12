@@ -36,6 +36,7 @@ class Level(object):
         self.image = util.load_image(image)
         self.rect = self.image.get_rect()
         self.__image_name = image
+        self.lives = 5
 
         self.player = pygame.sprite.GroupSingle()
         self.enemies = pygame.sprite.Group()
@@ -64,7 +65,7 @@ class Level(object):
     def add_boombox(self):
         if self.player.sprite.boomboxes > 0:
             self.others.add( boombox.Boombox( self.player.sprite.rect.center ) )
-            #self.player.sprite.boomboxes -= 1
+            self.player.sprite.boomboxes -= 1
             
     def add_flyer(self):
         if self.player.sprite.flyers > 0:
@@ -76,15 +77,15 @@ class Level(object):
                 self.others.add( flyer.Flyer( self.player.sprite.rect.midleft, 'right' ) )
             elif self.player.sprite.contacting == 'right':
                 self.others.add( flyer.Flyer( self.player.sprite.rect.midright, 'left' ) )
-            #self.player.sprite.flyers -= 1
+            self.player.sprite.flyers -= 1
         
     def add_turkeyshake(self):
         if self.player.sprite.turkeyshakes > 0:
             self.others.add( turkeyshake.Turkeyshake( self.player.sprite.rect.center, self.player.sprite.facing ) )
-            #self.player.sprite.turkeyshakes -= 1
+            self.player.sprite.turkeyshakes -= 1
             
-    def add_player(self, location = (0,0,0,0)):
-        self.player.sprite = player.Player( location, self.rect )
+    def add_player(self, location = (0,0), flyers = 0, bombs = 0, boomboxes = 0, turkeyshakes = 0):
+        self.player.sprite = player.Player( location, self.rect, flyers, bombs, boomboxes, turkeyshakes )
             
     def add_wall(self, location = (0,0,0,0)):
         self.walls.add( wall.Wall( location[0], location[1], location[2], location[3] ) )

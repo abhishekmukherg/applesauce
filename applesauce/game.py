@@ -48,6 +48,8 @@ class Game( object ):
         self.__state = val
         if val == "act1":
             self.level_config = "level_data/level0.ini"
+        elif val == "act2":
+            self.level_config = "level_data/level1.ini"
         elif val == "splash":
             self.level_config = "level_data/splash.ini"
         elif val == "info1":
@@ -78,7 +80,7 @@ class Game( object ):
     def populate_level(self):
         for location in self.level_config.player():
             LOG.debug("Adding player at %s" %str(location))
-            self.level.add_player(location)
+            self.level.add_player(location[0], location[1], location[2], location[3], location[4])
         for location in self.level_config.basic_enemies():
             LOG.debug("Adding basic enemy at %s" % str(location))
             self.level.add_enemy(0, location)
@@ -99,6 +101,10 @@ class Game( object ):
         
     def update( self ):
         self.clock.tick( 50 )
+        if self.level.lives <= 0:
+            self.state = 'lose'
+        elif self.state == 'act1' and self.level.player.sprite.flyers == 0:
+            self.state = 'act2'
         for event in pygame.event.get():
             self.handle_event( event )
         if self.state == 'act1' or self.state == 'act2':
