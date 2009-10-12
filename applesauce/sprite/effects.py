@@ -29,7 +29,6 @@ class SpriteSheet(pygame.sprite.Sprite):
     def state(self, val):
         self.__state = val
         self.draw_area.top = val * self.draw_area.height
-        LOG.debug("Draw area rect=%s" % unicode(self.draw_area))
 
     @property
     def anim_frame(self):
@@ -40,5 +39,4 @@ class SpriteSheet(pygame.sprite.Sprite):
     def anim_frame(self, val):
         self.__anim_frame = val
         self.draw_area.left = val * self.draw_area.width
-        LOG.debug("Draw area rect=%s" % unicode(self.draw_area))
 
