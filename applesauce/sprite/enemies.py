@@ -139,7 +139,3 @@ class Officer(Enemy):
         if self.can_see_player():
             self.allerted = True
             self.walk_towards_player()
-
-
-import doctest
-doctest.testmod()
