@@ -8,7 +8,7 @@ class Boombox(pygame.sprite.Sprite):
         self.type = 'boombox'
         self.boombox = util.load_image( "boombox.png" )
         pygame.sprite.Sprite.__init__( self, *groups )
-        self.rect = pygame.Rect( 0, 0, 75, 58 )
+        self.rect = pygame.Rect( 0, 0, 38, 28 )
         self.bar = pygame.Surface( ( 75, 2 ) )
         self.bar.fill( ( 255, 0, 0 ) )
         self.bar_rect = self.bar.get_rect()
@@ -20,9 +20,9 @@ class Boombox(pygame.sprite.Sprite):
         
     @property
     def image(self):
-        image = pygame.Surface( ( 75, 58 ), pygame.SRCALPHA, 32 ).convert_alpha()
+        image = pygame.Surface( ( 38, 28 ), pygame.SRCALPHA, 32 ).convert_alpha()
         image.blit( self.boombox, self.boombox.get_rect() )
-        image.blit( self.bar, self.bar.get_rect(), pygame.Rect( 0, 0, 75*(self.time/300.0), 2 ) )
+        image.blit( self.bar, self.bar.get_rect(), pygame.Rect( 0, 0, 38*(self.time/300.0), 2 ) )
         return image
         
     def update(self):
