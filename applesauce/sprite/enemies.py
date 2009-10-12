@@ -1,16 +1,28 @@
+from __future__ import division
+
 import pygame
 import weakref
+import math
+
+from applesauce import settings
 
 
 class PlayerNotFoundException(Exception):
     pass
 
+class WallsNotFoundException(Exception):
+    pass
+
 
 class Enemy(pygame.sprite.Sprite):
     
-    def __init__(self, player, *groups):
+    def __init__(self, player, walls, patrol=None, *groups):
         pygame.sprite.Sprite.__init__(self, *groups)
+        self.allerted = False
+        self.patrol = patrol
         self.player = player
+        self.walls = walls
+        self.max_v = settings.ENEMY_MAX_V
 
     @property
     def player(self):
@@ -20,7 +32,15 @@ class Enemy(pygame.sprite.Sprite):
     def player(self, val):
         self.__player = weakref.ref(val)
 
-    def can_see_player(self, obstructions):
+    @property
+    def walls(self):
+        return self.__walls()
+
+    @walls.setter
+    def walls(self, val):
+        self.__walls = weakref.ref(val)
+
+    def can_see_player(self):
         """Returns if the enemy can see the player
 
         obstructions should be a list of Rect's that would get in the way of
@@ -31,8 +51,14 @@ class Enemy(pygame.sprite.Sprite):
         """
         if self.player is None:
             raise PlayerNotFoundException
-        for rect in obstructions:
-            pass
+        if self.walls is None:
+            raise WallsNotFoundException
+        return not any(
+            self._obstructs_los(
+                x.rect,
+                self.rect.center,
+                self.player.rect.center)
+            for x in self.walls)
 
     @staticmethod
     def _obstructs_los(rect, start, end):
@@ -69,11 +95,33 @@ class Enemy(pygame.sprite.Sprite):
             val += 6
         return val
 
+    def _vector_towards_player(self):
+        """Returns vector to walk to towards player
+
+        Limits the length of vector to be self.max_v
+
+        """
+        if self.player is None:
+            raise PlayerNotFoundException
+        my_loc = self.rect.center
+        p_loc = self.player.rect.center
+        vector = (p_loc[0] - my_loc[0], p_loc[1] - my_loc[1])
+        length = math.sqrt(vector[0] * vector[0] + vector[1] * vector[1])
+        if length == 0:
+            return (0, 0)
+        vector = map(lambda x: (x * self.max_v)/length, vector)
+        return vector
+
+    def walk_towards_player(self):
+        """Walk towards the player at rate self.max_v"""
+        vector = self._vector_towards_player()
+        self.rect.move_ip(*vector)
+
 
 class BasicEnemy(Enemy):
     
-    def __init__(self, player, *groups):
-        Enemy.__init__(self, player, *groups)
+    def __init__(self, player, walls, *groups):
+        Enemy.__init__(self, player, walls, *groups)
         self.image = pygame.Surface((25, 25))
         self.image.fill((160, 160, 160))
         self.rect = self.image.get_rect()
@@ -81,11 +129,17 @@ class BasicEnemy(Enemy):
 
 class Officer(Enemy):
 
-    def __init__(self, player, *groups):
-        Enemy.__init__(self, player, *groups)
+    def __init__(self, player, walls, *groups):
+        Enemy.__init__(self, player, walls, *groups)
         self.image = pygame.Surface((25, 25))
         self.image.fill((100, 100, 100))
         self.rect = self.image.get_rect()
+
+    def update(self):
+        if self.can_see_player():
+            self.allerted = True
+            self.walk_towards_player()
+
 
 import doctest
 doctest.testmod()
