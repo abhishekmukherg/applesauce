@@ -135,6 +135,7 @@ class Level(object):
             
     def draw(self, surface):
         # Find location for player
+        self.player.sprite.booltop = True
         player_rect = self.player.sprite.rect
         rect = copy.copy(player_rect)
         rect.center = map(lambda x: x // 2, settings.SCREEN_SIZE)
@@ -162,6 +163,7 @@ class Level(object):
             
     def player_collisions(self):
         player = self.player.sprite
+        player.booltop = False
         player.contacting = ''
         #constrain to screen
         tmp_rect = player.rect.move( player.speed*(player.movement['right']-player.movement['left']), player.speed*(player.movement['down']-player.movement['up']) )
