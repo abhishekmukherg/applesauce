@@ -1,7 +1,9 @@
-import pygame
 import math
-import effects
 import util
+
+import pygame
+
+from applesauce.sprite import effects
 
 
 class Player(effects.SpriteSheet):
