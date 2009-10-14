@@ -254,7 +254,16 @@ class Level(object):
             bar_rect.center = bbar_rect.center
             surface.blit( self.bbar, bbar_rect )
             surface.blit( self.bar, bar_rect, pygame.Rect(0,0,self.player.sprite.placing,20) )
-
+        if pygame.font.get_init():
+            score = self.score()
+            if score is None:
+                return
+            font = pygame.font.Font(pygame.font.get_default_font(),
+                    settings.HUD_FONT_SIZE)
+            text = font.render(str(self.score()), False, (255, 255, 255))
+            text_rect = text.get_rect()
+            text_rect.bottomright = settings.SCREEN_SIZE
+            surface.blit(text, text_rect)
             
     def player_collisions(self):
         player = self.player.sprite
