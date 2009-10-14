@@ -169,8 +169,9 @@ class Level(object):
         surface.blit(self.player.sprite.image,
                 rect,
                 self.player.sprite.draw_area)
-        surface.blit(self.hud.sprite.image,
-                self.hud.sprite.rect)
+        if self.hud.sprite is not None:
+            surface.blit(self.hud.sprite.image,
+                    self.hud.sprite.rect)
 
             
     def player_collisions(self):
