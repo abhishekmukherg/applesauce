@@ -32,7 +32,7 @@ class Game( object ):
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode(settings.SCREEN_SIZE)
         self.level = None
-        self.state = 'splash'
+        self.state = 'act1'
         
         #self.splash = util.load_image( self.splash_image )
         #self.win = util.load_image( self.win_image )
@@ -90,6 +90,8 @@ class Game( object ):
         for location in self.level_config.walls():
             LOG.debug("Adding wall at %s" % str(location))
             self.level.add_wall(location)
+        if self.level_config.hud_level() is not None:
+            self.level.add_hud(self.level_config.hud_level())
      
     @property
     def caption(self):

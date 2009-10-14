@@ -65,11 +65,17 @@ class Enemy(pygame.sprite.Sprite):
 
     @property
     def player(self):
-        return self.__player()
+        if self.__player is not None:
+            return self.__player()
+        else:
+            return None
 
     @player.setter
     def player(self, val):
-        self.__player = weakref.ref(val)
+        if val is not None:
+            self.__player = weakref.ref(val)
+        else:
+            self.__player = None
 
     @property
     def walls(self):

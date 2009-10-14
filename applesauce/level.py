@@ -11,6 +11,7 @@ from applesauce.sprite import boombox
 from applesauce.sprite import wall
 from applesauce.sprite import flyer
 from applesauce.sprite import turkeyshake
+from applesauce.sprite import hud
 
 
 class InvalidEnemyException(IndexError):
@@ -38,6 +39,7 @@ class Level(object):
         self.__image_name = image
         self.lives = 5
 
+        self.hud = pygame.sprite.GroupSingle()
         self.player = pygame.sprite.GroupSingle()
         self.enemies = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
@@ -86,6 +88,10 @@ class Level(object):
             
     def add_player(self, location = (0,0), flyers = 0, bombs = 0, boomboxes = 0, turkeyshakes = 0):
         self.player.sprite = player.Player( location, self.rect, flyers, bombs, boomboxes, turkeyshakes )
+
+    def add_hud(self, level):
+        self.hud.add(hud.Hud(self.player.sprite, level))
+        self.hud.sprite.bottom_right = settings.SCREEN_SIZE
             
     def add_wall(self, location = (0,0,0,0)):
         self.walls.add( wall.Wall( location[0], location[1], location[2], location[3] ) )
@@ -163,6 +169,9 @@ class Level(object):
         surface.blit(self.player.sprite.image,
                 rect,
                 self.player.sprite.draw_area)
+        surface.blit(self.hud.sprite.image,
+                self.hud.sprite.rect)
+
             
     def player_collisions(self):
         player = self.player.sprite

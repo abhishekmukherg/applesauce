@@ -55,3 +55,8 @@ class LevelConfig(object):
         if not self.config.has_option("LevelInfo", "magic_scroll"):
             return True
         return ast.literal_eval(self.config.get("LevelInfo", "magic_scroll"))
+
+    def hud_level(self):
+        if not self.config.has_option("LevelInfo", "hud"):
+            return None
+        return ast.literal_eval(self.config.get("LevelInfo", "hud"))
