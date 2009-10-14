@@ -15,7 +15,7 @@ setup(name="applesauce",
         },
         install_requires = ['pygame'],
         package_data = {
-            'applesauce': ['images/*.png', 'level_data/*.ini'],
+            'applesauce': ['images/*.png', 'level_data/*.ini', 'sounds/*.ogg'],
         },
         test_suite="tests.suite",
 )
