@@ -37,6 +37,7 @@ class Enemy(pygame.sprite.Sprite):
         self._random_steps = 0
         self._random_dir = None
         self.time_till_lost = 0
+        self.attractor_weakref = None
 
     @property
     def time_till_lost(self):
@@ -136,16 +137,14 @@ class Enemy(pygame.sprite.Sprite):
             val += 6
         return val
 
-    def _vector_towards_player(self):
+    def _vector_towards_sprite(self, sprite):
         """Returns vector to walk to towards player
 
         Limits the length of vector to be self.max_v
 
         """
-        if self.player is None:
-            raise PlayerNotFoundException
         my_loc = self.rect.center
-        p_loc = self.player.rect.center
+        p_loc = sprite.rect.center
         vector = (p_loc[0] - my_loc[0], p_loc[1] - my_loc[1])
         length = vec_length(p_loc, my_loc)
         if length == 0:
@@ -153,9 +152,9 @@ class Enemy(pygame.sprite.Sprite):
         vector = map(lambda x: (x * self.max_v)/length, vector)
         return vector
 
-    def walk_towards_player(self):
+    def walk_towards_sprite(self, sprite):
         """Walk towards the player at rate self.max_v"""
-        vector = self._vector_towards_player()
+        vector = self._vector_towards_sprite(sprite)
         tmp_rect = self.rect
         self.rect = self.rect.move(*vector)
         self._return_from_collide(tmp_rect)
@@ -218,10 +217,15 @@ class BasicEnemy(Enemy):
         self.rect = self.image.get_rect()
 
     def update(self):
-        print self.time_till_lost
         super(BasicEnemy, self).update()
+        if self.attractor_weakref:
+            if self.attractor_weakref():
+                self.walk_towards_sprite(self.attractor_weakref())
+                return
+            else:
+                self.attractor_weakref = None
         if self.allerted:
-            self.walk_towards_player()
+            self.walk_towards_sprite(self.player)
         else:
             self.walk_randomly()
 
@@ -268,6 +272,12 @@ class Officer(Enemy):
 
     def update(self):
         super(Officer, self).update()
+        if self.attractor_weakref:
+            if self.attractor_weakref():
+                self.walk_towards_sprite(self.attractor_weakref())
+                return
+            else:
+                self.attractor_weakref = None
         can_see_player = self.can_see_player()
 
         # the officer has no idea the player exists
@@ -279,4 +289,4 @@ class Officer(Enemy):
             self.allerted = True
 
         self._alert_nearby_enemies()
-        self.walk_towards_player()
+        self.walk_towards_sprite(self.player)

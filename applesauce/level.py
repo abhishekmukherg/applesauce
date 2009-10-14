@@ -64,7 +64,7 @@ class Level(object):
         
     def add_boombox(self):
         if self.player.sprite.boomboxes > 0:
-            self.others.add( boombox.Boombox( self.player.sprite.rect.center ) )
+            self.others.add(boombox.Boombox(self.player.sprite.rect.center, self.enemies))
             #self.player.sprite.boomboxes -= 1
             
     def add_flyer(self):
