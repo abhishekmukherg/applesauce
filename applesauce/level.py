@@ -289,7 +289,7 @@ class Level(object):
                         self.enemies,
                         False,
                         pygame.sprite.collide_circle)
-                score += (1 << len(collided) / 5)
+                score += (1 << len(collided) // 5)
         return score
 
 
