@@ -60,3 +60,8 @@ class LevelConfig(object):
         if not self.config.has_option("LevelInfo", "hud"):
             return None
         return ast.literal_eval(self.config.get("LevelInfo", "hud"))
+
+    def big(self):
+        if not self.config.has_option("LevelInfo", "big"):
+            return False
+        return ast.literal_eval(self.config.get("LevelInfo", "big"))

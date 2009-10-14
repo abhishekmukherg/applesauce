@@ -30,6 +30,7 @@ class Player(effects.SpriteSheet):
         self.flipped = False
         self.booltop = False
         
+        print location
         self.rect.center = location
         if big:
             self.rect.inflate_ip( 0,-45 )

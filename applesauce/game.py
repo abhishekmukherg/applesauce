@@ -74,13 +74,19 @@ class Game( object ):
     @level_config.setter
     def level_config(self, val):
         self.__level_config = level_config.LevelConfig(val)
-        self.level = level.Level(self.level_config.image(), self.state == 'act2')
+        self.level = level.Level(self.level_config.image())
         self.populate_level()
 
     def populate_level(self):
         for location in self.level_config.player():
             LOG.debug("Adding player at %s" %str(location))
-            self.level.add_player(location[0], location[1], location[2], location[3], location[4])
+            self.level.add_player(
+                    self.level_config.big(),
+                    location[0],
+                    location[1],
+                    location[2],
+                    location[3],
+                    location[4])
         for location in self.level_config.basic_enemies():
             LOG.debug("Adding basic enemy at %s" % str(location))
             self.level.add_enemy(0, location)

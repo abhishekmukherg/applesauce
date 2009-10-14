@@ -86,8 +86,15 @@ class Level(object):
             self.others.add( turkeyshake.Turkeyshake( self.player.sprite.rect.center, self.player.sprite.facing ) )
             #self.player.sprite.turkeyshakes -= 1
             
-    def add_player(self, location = (0,0), flyers = 0, bombs = 0, boomboxes = 0, turkeyshakes = 0):
-        self.player.sprite = player.Player( location, self.rect, flyers, bombs, boomboxes, turkeyshakes )
+    def add_player(self, big, location = (0,0), flyers = 0, bombs = 0, boomboxes = 0, turkeyshakes = 0):
+        self.player.add(player.Player(
+            big,
+            location,
+            self.rect,
+            flyers,
+            bombs,
+            boomboxes,
+            turkeyshakes))
 
     def add_hud(self, level):
         self.hud.add(hud.Hud(self.player.sprite, level))
