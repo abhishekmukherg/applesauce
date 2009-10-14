@@ -242,8 +242,8 @@ class Level(object):
                 player.rect.left = player.constraint.left
             if tmp_rect.right > player.constraint.right:
                 player.rect.right = player.constraint.right
-                
-        tmp_list = pygame.sprite.spritecollide( player, self.walls, False, pygame.sprite.collide_rect )
+        wall_like_sprites = itertools.chain(self.walls, (door for door in self.doors if not door.open))
+        tmp_list = pygame.sprite.spritecollide( player, wall_like_sprites, False, pygame.sprite.collide_rect )
         for wall in tmp_list:
             if player.rect.bottom > wall.rect.bottom and (wall.rect.bottom - player.rect.top) <= player.speed:
                 player.rect.top = wall.rect.bottom
