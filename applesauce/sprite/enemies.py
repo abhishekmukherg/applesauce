@@ -204,7 +204,6 @@ class Enemy(effects.SpriteSheet):
     def walk_randomly(self):
         if self._random_dir is None:
             self._random_dir = random.choice(DIRECTIONS)
-            LOG.debug("New random dir: %s" % self._random_dir)
             self._random_steps = settings.TIME_IN_RANDOM_DIR + \
                     random.randint(0, settings.TIME_IN_RANDOM_DIR_VARIATION)
         if self._random_steps <= 0:
@@ -369,6 +368,7 @@ class Officer(Enemy):
         # the officer has no idea the player exists
         if not can_see_player and not self.allerted:
             self.walk_randomly()
+            self.booltop = True
             return
 
         if can_see_player:

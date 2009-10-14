@@ -35,7 +35,6 @@ class Boombox(pygame.sprite.Sprite):
         return image
 
     def _attract_nearby_enemies(self):
-        print self.enemies
         if self.enemies is None:
             return
         bounding_rect = pygame.Rect((0, 0),

@@ -156,7 +156,6 @@ class Level(object):
             group.update(*args)
         self.player_collisions()
         self.other_collisions()
-        print self.score()
             
     def draw(self, surface):
         # Find location for player
@@ -263,10 +262,8 @@ class Level(object):
                         False)
                 if collisions:
                     for sprite in collisions:
-                        print sprite.max_v
                         if hasattr(sprite, 'max_v'):
                             sprite.max_v *= settings.TURKEY_SPEED_MODIFIER
-                        print sprite.max_v
                     other.explode()
                 
             if other.type == 'turkeyshake' and pygame.sprite.spritecollideany( other, self.walls ):
