@@ -214,6 +214,21 @@ class Level(object):
                     
     def other_collisions(self):
         for other in self.others:
+            if other.type == 'turkeyshake' and other.exploded:
+                continue
+            if other.type == 'turkeyshake':
+                collisions = pygame.sprite.spritecollide(
+                        other,
+                        self.enemies,
+                        False)
+                if collisions:
+                    for sprite in collisions:
+                        print sprite.max_v
+                        if hasattr(sprite, 'max_v'):
+                            sprite.max_v *= settings.TURKEY_SPEED_MODIFIER
+                        print sprite.max_v
+                    other.explode()
+                
             if other.type == 'turkeyshake' and pygame.sprite.spritecollideany( other, self.walls ):
                 other.explode()
 
