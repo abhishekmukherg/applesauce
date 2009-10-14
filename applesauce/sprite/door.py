@@ -46,8 +46,6 @@ class Door(effects.SpriteSheet):
     def update(self):
         if not self.moving:
             return
-        LOG.debug("Frame for door %d. anim_frame %d" % (self.frame,
-            self.anim_frame))
         self.frame += 1
 
         if self.frame < settings.DOOR_FRAME_TIME:
