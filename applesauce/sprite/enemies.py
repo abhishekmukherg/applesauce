@@ -247,7 +247,7 @@ class Enemy(effects.SpriteSheet):
         
     def update_anim(self, vector = (0,0)):
         lr = False
-        if vector[0] < 0 and 2*vector[1] < 4*vector[0]:
+        if vector[0] < 0 and 2*vector[1] > 4*vector[0]:
             self.facing = 'left'
             lr = True
             if self.flipped == False:
@@ -261,7 +261,7 @@ class Enemy(effects.SpriteSheet):
                 self.flipped = False
         if lr:
             self.state = 2
-        if vector[1] < 0 and 2*vector[0] < 4*vector[1]:
+        if vector[1] < 0 and 2*vector[0] > 4*vector[1]:
             if lr:
                 self.facing += 'up'
                 self.state = 1
