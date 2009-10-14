@@ -109,6 +109,8 @@ class Game( object ):
             self.level.add_bombsite(location)
         for location in self.level_config.doors():
             self.level.add_door(location[0], location[1])
+        for location in self.level_config.end():
+            self.level.add_end(location)
         if self.level_config.hud_level() is not None:
             self.level.add_hud(self.level_config.hud_level())
      
@@ -126,7 +128,7 @@ class Game( object ):
             self.state = 'lose'
         elif self.state == 'act1' and self.level.player.sprite.flyers == 0:
             self.state = 'act2'
-        elif self.state == 'act2' and self.level.player.sprite.bombs == 0:
+        elif self.state == 'act2' and self.level.player.sprite.bombs == 0 and self.level.player.sprite.end == True:
             self.state = 'win'
         for event in pygame.event.get():
             self.handle_event( event )

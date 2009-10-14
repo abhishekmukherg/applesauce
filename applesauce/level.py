@@ -19,6 +19,7 @@ from applesauce.sprite import hud
 from applesauce.sprite import bomb
 from applesauce.sprite import bombsite
 from applesauce.sprite import door
+from applesauce.sprite import end
 
 
 LOG = logging.getLogger(__name__)
@@ -108,6 +109,9 @@ class Level(object):
     def add_bombsite(self, location = (0,0,0,0)):
         self.bombsites.add( bombsite.Bombsite( location[0], location[1], location[2], location[3] ) )
         
+    def add_end(self, location = (0,0,0,0)):
+        self.bombsites.add( end.End( location[0], location[1], location[2], location[3] ) )
+        
     def add_turkeyshake(self):
         if self.player.sprite.turkeyshakes > 0:
             self.others.add( turkeyshake.Turkeyshake( self.big, self.player.sprite.rect.center, self.player.sprite.facing ) )
@@ -193,6 +197,7 @@ class Level(object):
         #self.enemy_collisions()
         for group in self.__groups:
             group.update(*args)
+        self.just_placed = False
         if self.player.sprite.placing == 200:
             self.player.sprite.placing = 0
             self.others.add( bomb.Bomb( self.player.sprite.rect.center ) )
@@ -309,12 +314,16 @@ class Level(object):
                     enemy.allerted = False
                     
         player.bomb_place = False
+        player.end = False
         for bombsite in self.bombsites:
             if bombsite.rect.contains(player.rect):
-                if player.just_placed == True:
-                    bombsite.kill()
-                else:
-                    player.bomb_place = True
+                if bombsite.type == "bombsite":
+                    if player.just_placed == True:
+                        bombsite.kill()
+                    else:
+                        player.bomb_place = True
+                elif bombsite.type == "end":
+                    player.end = True
             
     # def enemy_collisions(self):
         # tmp = pygame.sprite.groupcollide( self.enemies, self.walls, False, False )

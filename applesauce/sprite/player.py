@@ -31,6 +31,7 @@ class Player(effects.SpriteSheet):
         self.wait = 0
         self.bomb_place = False
         self.placing = 0
+        self.end = False
         
         self.rect.center = location
         if big:

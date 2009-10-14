@@ -58,6 +58,11 @@ class LevelConfig(object):
             return tuple()
         return self.__get_list_from_section("BombSites")
         
+    def end(self):
+        if not self.config.has_section("End"):
+            return tuple()
+        return self.__get_list_from_section("End")
+        
     def image(self):
         return self.config.get("LevelInfo", "image")
 
