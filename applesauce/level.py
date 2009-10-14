@@ -105,7 +105,7 @@ class Level(object):
             turkeyshakes))
 
     def add_hud(self, level):
-        self.hud.add(hud.Hud(self.player.sprite, level))
+        self.hud.add(hud.Hud(self.player.sprite, level, lambda: self.lives))
         self.hud.sprite.bottom_right = settings.SCREEN_SIZE
             
     def add_wall(self, location = (0,0,0,0)):

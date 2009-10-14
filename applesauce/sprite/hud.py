@@ -9,10 +9,11 @@ from applesauce.sprite import util
 
 class Hud(pygame.sprite.Sprite):
     
-    def __init__(self, player, level, *groups):
+    def __init__(self, player, level, lives_fn, *groups):
         pygame.sprite.Sprite.__init__(self, *groups)
         self.player = weakref.ref(player)
         self.level = level
+        self.lives_fn = lives_fn
         if level == 0:
             self._image = util.load_image("HUD_Lvl_01.png")
         self.rect = self._image.get_rect()
@@ -36,6 +37,10 @@ class Hud(pygame.sprite.Sprite):
                                 False,
                                 (255, 255, 255)),
                         pygame.Rect((750, 35), (0, 0)))
+                surface.blit(font.render(str(self.lives_fn()),
+                                False,
+                                (255, 255, 255)),
+                        pygame.Rect((50, 35), (0, 0)))
         return surface
         
     def update(self):
