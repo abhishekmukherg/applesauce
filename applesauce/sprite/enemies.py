@@ -177,7 +177,6 @@ class Enemy(pygame.sprite.Sprite):
                 self.rect.right = sprite.rect.left
 
     def walk_randomly(self):
-        return
         if self._random_dir is None:
             self._random_dir = random.choice(DIRECTIONS)
             LOG.debug("New random dir: %s" % self._random_dir)
