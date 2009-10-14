@@ -4,7 +4,7 @@ import util
 
 class Flyer(pygame.sprite.Sprite):
     
-    def __init__(self, location, direction, *groups):
+    def __init__(self, location, direction, diff = 0, *groups):
         self.type = 'flyer'
         pygame.sprite.Sprite.__init__( self, *groups )
         if direction == 'up':
@@ -23,6 +23,8 @@ class Flyer(pygame.sprite.Sprite):
             self.rect.midbottom = location
         else:
             self.rect.center = location
+        if direction == 'up':
+            self.rect.centery += diff
         
     def update(self):
         pass

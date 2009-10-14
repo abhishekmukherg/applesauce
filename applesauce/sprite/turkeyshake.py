@@ -33,8 +33,7 @@ class Turkeyshake(pygame.sprite.Sprite):
         if self.exploded == False:
             self.time = 200
             self.exploded = True
-            self.image = pygame.Surface( ( 40, 40 ) )
-            self.image.fill( ( 255, 100, 0 ) )
+            self.image = util.load_image( "hit_smoothie_Turkey.png" )
             tmp = self.image.get_rect()
             tmp.center = self.rect.center
             self.rect = tmp

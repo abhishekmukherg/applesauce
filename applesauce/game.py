@@ -74,7 +74,7 @@ class Game( object ):
     @level_config.setter
     def level_config(self, val):
         self.__level_config = level_config.LevelConfig(val)
-        self.level = level.Level(self.level_config.image())
+        self.level = level.Level(self.level_config.image(), self.state == 'act2')
         self.populate_level()
 
     def populate_level(self):
@@ -88,7 +88,6 @@ class Game( object ):
             LOG.debug("Adding officer at %s" % str(location))
             self.level.add_enemy(1, location)
         for location in self.level_config.walls():
-            LOG.debug("Adding wall at %s" % str(location))
             self.level.add_wall(location)
         if self.level_config.hud_level() is not None:
             self.level.add_hud(self.level_config.hud_level())
