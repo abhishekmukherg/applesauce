@@ -4,7 +4,11 @@ CAPTION = "Applesauce"
 
 SCREEN_SIZE = collections.namedtuple('Size', 'width height')(800, 600)
 
-ENEMY_MAX_V = 4
+ENEMY_MAX_V_1 = 2
+ENEMY_MAX_V_2 = 3
+
+OFFICER_MAX_V_1 = 3.5
+OFFICER_MAX_V_2 = 4.5
 
 TIME_IN_RANDOM_DIR = 100
 

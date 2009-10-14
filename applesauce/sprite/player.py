@@ -9,7 +9,6 @@ from applesauce.sprite import effects
 class Player(effects.SpriteSheet):
     
     def __init__(self, big, location, constraint, flyers, bombs, boomboxes, turkeyshakes, *groups):
-        print( big )
         if big == True:
             effects.SpriteSheet.__init__(self, util.load_image( "playerBigMove_sheet.png" ), (60,90) )
             self.max_speed = 5
@@ -30,7 +29,6 @@ class Player(effects.SpriteSheet):
         self.flipped = False
         self.booltop = False
         
-        print location
         self.rect.center = location
         if big:
             self.rect.inflate_ip( 0,-45 )
@@ -95,7 +93,8 @@ class Player(effects.SpriteSheet):
                 
         self.speed = self.max_speed
         if self.movement['up'] ^ self.movement['down'] == 1 and self.movement['left'] ^ self.movement['right'] == 1:
-            self.speed = math.sqrt( (self.max_speed**2)/2 )
+            self.speed = self.max_speed/ math.sqrt( 2.0 )
+        print self.speed
         
         self.rect.move_ip( self.speed*(self.movement['right']-self.movement['left']), self.speed*(self.movement['down']-self.movement['up']) )
         

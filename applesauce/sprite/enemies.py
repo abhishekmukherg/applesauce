@@ -5,6 +5,8 @@ import weakref
 import logging
 import math
 import random
+import util
+import effects
 
 from applesauce import settings
 
@@ -25,19 +27,24 @@ def vec_length(start, end):
     return math.sqrt(vec[0] * vec[0] + vec[1] * vec[1])
 
 
-class Enemy(pygame.sprite.Sprite):
+class Enemy(effects.SpriteSheet):
     
-    def __init__(self, player, walls, patrol=None, *groups):
-        pygame.sprite.Sprite.__init__(self, *groups)
+    def __init__(self, player, walls, image, size, patrol=None, *groups):
+        effects.SpriteSheet.__init__(self, util.load_image( image ), size )
         self.allerted = False
         self.patrol = patrol
         self.player = player
         self.walls = walls
-        self.max_v = settings.ENEMY_MAX_V
         self._random_steps = 0
         self._random_dir = None
         self.time_till_lost = 0
         self.attractor_weakref = None
+        self.facing = 'right'
+        self.time = 0
+        self.anim_frame = 0
+        self.state = 0
+        self.flipped = False
+        self.booltop = True
 
     @property
     def time_till_lost(self):
@@ -84,6 +91,18 @@ class Enemy(pygame.sprite.Sprite):
     @walls.setter
     def walls(self, val):
         self.__walls = weakref.ref(val)
+        
+    @property
+    def booltop(self):
+        return self._booltop
+        
+    @booltop.setter
+    def booltop(self, val):
+        self._booltop = val
+        if val == True:
+            self.rect.bottom = self.rect.top
+        else:
+            self.rect.top = self.rect.bottom
 
     def can_see_player(self):
         """Returns if the enemy can see the player
@@ -161,6 +180,7 @@ class Enemy(pygame.sprite.Sprite):
     def walk_towards_sprite(self, sprite):
         """Walk towards the player at rate self.max_v"""
         vector = self._vector_towards_sprite(sprite)
+        self.update_anim(vector)
         tmp_rect = self.rect
         self.rect = self.rect.move(*vector)
         self._return_from_collide(tmp_rect)
@@ -206,27 +226,78 @@ class Enemy(pygame.sprite.Sprite):
                 for v in veloc_dict.itervalues())
         veloc = veloc_dict[self._random_dir]
         veloc = map(lambda x: x * self.max_v, veloc)
+        self.update_anim(veloc)
         tmp_rect = self.rect
         self.rect = self.rect.move(*veloc)
         self._return_from_collide(tmp_rect)
 
     def update(self):
         self.time_till_lost -= 1
+        
+    def update_anim(self, vector = (0,0)):
+        lr = False
+        if vector[0] < 0 and 2*vector[1] < 4*vector[0]:
+            self.facing = 'left'
+            lr = True
+            if self.flipped == False:
+                self.image = pygame.transform.flip( self.image, True, False )
+                self.flipped = True
+        elif vector[0] > 0 and 2*vector[1] <  4*vector[0]:
+            self.facing = 'right'
+            lr = True
+            if self.flipped == True:
+                self.image = pygame.transform.flip( self.image, True, False )
+                self.flipped = False
+        if lr:
+            self.state = 2
+        if vector[1] < 0 and 2*vector[0] < 4*vector[1]:
+            if lr:
+                self.facing += 'up'
+                self.state = 1
+            else:
+                self.facing = 'up'
+                self.state = 0
+        if vector[1] > 0 and 2*vector[0] < 4*vector[1]:
+            if lr:
+                self.facing += 'down'
+                self.state = 3
+            else:
+                self.facing = 'down'
+                self.state = 4
+        if vector[0] != 0 or vector[1] != 0:
+            if self.flipped == True:
+                self.time -= 1
+            else:
+                self.time += 1
+            self.anim_frame = self.time // 2
+            if self.anim_frame > 10:
+                self.time = 0
+                self.anim_frame = 0
+            elif self.anim_frame < 0:
+                self.time = 2 * 10
+                self.anim_frame = 10
 
 
 class BasicEnemy(Enemy):
     
-    def __init__(self, player, walls, *groups):
-        Enemy.__init__(self, player, walls, *groups)
-        self.image = pygame.Surface((25, 25))
-        self.image.fill((160, 160, 160))
-        self.rect = self.image.get_rect()
+    def __init__(self, big, location, player, walls, *groups):
+        if big == True:
+            Enemy.__init__(self, player, walls, "enemyWalkingBigMove_sheet.png", (60,90), *groups)
+            self.rect.height -= 45
+            self.max_v = settings.ENEMY_MAX_V_2
+        else:
+            Enemy.__init__(self, player, walls, "enemyWalkingMove_sheet.png", (30,45), *groups)
+            self.rect.height -= 22.5
+            self.max_v = settings.ENEMY_MAX_V_1
+        self.rect.topleft = location
 
     def update(self):
+        self.booltop = False
         super(BasicEnemy, self).update()
         if self.attractor_weakref:
             if self.attractor_weakref():
                 self.walk_towards_sprite(self.attractor_weakref())
+                self.booltop = True
                 return
             else:
                 self.attractor_weakref = None
@@ -234,15 +305,21 @@ class BasicEnemy(Enemy):
             self.walk_towards_sprite(self.player)
         else:
             self.walk_randomly()
+        self.booltop = True
 
 
 class Officer(Enemy):
 
-    def __init__(self, player, walls, all_enemies, *groups):
-        Enemy.__init__(self, player, walls, *groups)
-        self.image = pygame.Surface((25, 25))
-        self.image.fill((100, 100, 100))
-        self.rect = self.image.get_rect()
+    def __init__(self, big, location, player, walls, all_enemies, *groups):
+        if big == True:
+            Enemy.__init__(self, player, walls, "enemyOfficerBigMove_sheet.png", (70,87), *groups)
+            self.rect.height -= 43.5
+            self.max_v = settings.OFFICER_MAX_V_2
+        else:
+            Enemy.__init__(self, player, walls, "enemyOfficerMove_sheet.png", (35,43.5), *groups)
+            self.rect.height -= 21.75
+            self.max_v = settings.OFFICER_MAX_V_1
+        self.rect.topleft = location
         self.time_till_lost = 0
         self.all_enemies = all_enemies
 
@@ -277,10 +354,12 @@ class Officer(Enemy):
                 sprite.allerted = True
 
     def update(self):
+        self.booltop = False
         super(Officer, self).update()
         if self.attractor_weakref:
             if self.attractor_weakref():
                 self.walk_towards_sprite(self.attractor_weakref())
+                self.booltop = True
                 return
             else:
                 self.attractor_weakref = None
@@ -296,3 +375,4 @@ class Officer(Enemy):
 
         self._alert_nearby_enemies()
         self.walk_towards_sprite(self.player)
+        self.booltop = True

@@ -8,12 +8,16 @@ from applesauce.sprite import util
 
 class Boombox(pygame.sprite.Sprite):
     
-    def __init__(self, center, enemies, *groups):
+    def __init__(self, big, center, enemies, *groups):
         self.type = 'boombox'
-        self.boombox = util.load_image( "boombox.png" )
         pygame.sprite.Sprite.__init__( self, *groups )
-        self.rect = pygame.Rect( 0, 0, 38, 28 )
-        self.bar = pygame.Surface( ( 75, 2 ) )
+        if big == True:
+            self.boombox = util.load_image( "boomboxBig.png" )
+            self.rect = pygame.Rect( 0, 0, 75, 56 )
+        else:
+            self.boombox = util.load_image( "boombox.png" )
+            self.rect = pygame.Rect( 0, 0, 38, 28 )
+        self.bar = pygame.Surface( ( self.rect.width, 2 ) )
         self.bar.fill( ( 255, 0, 0 ) )
         self.bar_rect = self.bar.get_rect()
         self.time = 300
@@ -25,9 +29,9 @@ class Boombox(pygame.sprite.Sprite):
         
     @property
     def image(self):
-        image = pygame.Surface( ( 38, 28 ), pygame.SRCALPHA, 32 ).convert_alpha()
+        image = pygame.Surface( ( self.rect.width, self.rect.height ), pygame.SRCALPHA, 32 ).convert_alpha()
         image.blit( self.boombox, self.boombox.get_rect() )
-        image.blit( self.bar, self.bar.get_rect(), pygame.Rect( 0, 0, 38*(self.time/300.0), 2 ) )
+        image.blit( self.bar, self.bar.get_rect(), pygame.Rect( 0, 0, self.rect.width*(self.time/300.0), 2 ) )
         return image
 
     def _attract_nearby_enemies(self):

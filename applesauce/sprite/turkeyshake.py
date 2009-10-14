@@ -5,14 +5,18 @@ import util
 
 class Turkeyshake(pygame.sprite.Sprite):
     
-    def __init__(self, location, direction, *groups):
+    def __init__(self, big, location, direction, *groups):
         self.type = 'turkeyshake'
         pygame.sprite.Sprite.__init__( self, *groups )
         self.movement = { 'up':0, 'down':0, 'left':0, 'right':0 }
-        self.image = util.load_image( "smoothie_Turkey.png" )
+        if big == True:
+            self.image = util.load_image( "smoothie_TurkeyBig.png" )
+        else:
+            self.image = util.load_image( "smoothie_Turkey.png" )
         self.rect = self.image.get_rect()
         self.time = 30
         self.exploded = False
+        self.big = big
         
         if direction.endswith( 'up' ):
             self.movement['up'] = 1
@@ -33,7 +37,10 @@ class Turkeyshake(pygame.sprite.Sprite):
         if self.exploded == False:
             self.time = 200
             self.exploded = True
-            self.image = util.load_image( "hit_smoothie_Turkey.png" )
+            if self.big == True:
+                self.image = util.load_image( "hit_smoothie_TurkeyBig.png" )
+            else:
+                self.image = util.load_image( "hit_smoothie_Turkey.png" )
             tmp = self.image.get_rect()
             tmp.center = self.rect.center
             self.rect = tmp

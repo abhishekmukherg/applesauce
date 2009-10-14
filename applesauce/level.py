@@ -36,7 +36,8 @@ class InvalidEnemyException(IndexError):
 
 class Level(object):
 
-    def __init__(self, image):
+    def __init__(self, image, big):
+        self.big = big
         self.image = util.load_image(image)
         self.rect = self.image.get_rect()
         self.__image_name = image
@@ -69,29 +70,32 @@ class Level(object):
         
     def add_boombox(self):
         if self.player.sprite.boomboxes > 0:
-            self.others.add(boombox.Boombox(self.player.sprite.rect.center, self.enemies))
+            self.others.add(boombox.Boombox( self.big, self.player.sprite.rect.center, self.enemies))
             #self.player.sprite.boomboxes -= 1
             
     def add_flyer(self):
         if self.player.sprite.flyers > 0:
             if self.player.sprite.contacting == 'up':
                 self.others.add( flyer.Flyer( self.player.sprite.rect.midtop, 'down' ) )
+                self.player.sprite.flyers -= 1
             elif self.player.sprite.contacting == 'down':
-                self.others.add( flyer.Flyer( self.player.sprite.rect.midbottom, 'up' ) )
+                self.others.add( flyer.Flyer( self.player.sprite.rect.midbottom, 'up', self.player.sprite.rect.height ) )
+                self.player.sprite.flyers -= 1
             elif self.player.sprite.contacting == 'left':
                 self.others.add( flyer.Flyer( self.player.sprite.rect.midleft, 'right' ) )
+                self.player.sprite.flyers -= 1
             elif self.player.sprite.contacting == 'right':
                 self.others.add( flyer.Flyer( self.player.sprite.rect.midright, 'left' ) )
-            self.player.sprite.flyers -= 1
+                self.player.sprite.flyers -= 1
         
     def add_turkeyshake(self):
         if self.player.sprite.turkeyshakes > 0:
-            self.others.add( turkeyshake.Turkeyshake( self.player.sprite.rect.center, self.player.sprite.facing ) )
+            self.others.add( turkeyshake.Turkeyshake( self.big, self.player.sprite.rect.center, self.player.sprite.facing ) )
             #self.player.sprite.turkeyshakes -= 1
             
-    def add_player(self, big, location = (0,0), flyers = 0, bombs = 0, boomboxes = 0, turkeyshakes = 0):
+    def add_player(self, location = (0,0), flyers = 0, bombs = 0, boomboxes = 0, turkeyshakes = 0):
         self.player.add(player.Player(
-            big,
+            self.big,
             location,
             self.rect,
             flyers,
@@ -114,15 +118,16 @@ class Level(object):
 
         """
         if level == 0:
-            enemy = enemies.BasicEnemy(self.player.sprite, self.walls)
+            enemy = enemies.BasicEnemy(self.big, location, self.player.sprite, self.walls)
         elif level == 1:
             enemy = enemies.Officer(
+                    self.big,
+                    location,
                     self.player.sprite,
                     self.walls,
                     self.enemies)
         else:
             raise InvalidEnemyException(level, 1)
-        enemy.rect.topleft = location
         self.enemies.add(enemy)
     
     def remove(self, *sprites):
