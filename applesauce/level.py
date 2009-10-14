@@ -148,6 +148,7 @@ class Level(object):
             group.update(*args)
         self.player_collisions()
         self.other_collisions()
+        print self.score()
             
     def draw(self, surface):
         # Find location for player
@@ -248,6 +249,27 @@ class Level(object):
                 
             if other.type == 'turkeyshake' and pygame.sprite.spritecollideany( other, self.walls ):
                 other.explode()
+
+    def score(self):
+        """Get the score in the level's current form"""
+        class FlyerCircle:
+            def __init__(self, rect):
+                self.rect = pygame.Rect((0, 0),
+                        [2 * settings.FLYER_RADIUS] * 2)
+                self.rect.center = rect.center
+                self.radius = settings.FLYER_RADIUS
+        score = 1
+        for sprite in self.others:
+            if sprite.type == 'flyer':
+                f = FlyerCircle(sprite.rect)
+                collided = pygame.sprite.spritecollide(
+                        f,
+                        self.enemies,
+                        False,
+                        pygame.sprite.collide_circle)
+                score *= (1 << len(collided))
+        return score
+
 
     def clear(self):
         for group in self.__groups:
