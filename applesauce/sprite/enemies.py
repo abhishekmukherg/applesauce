@@ -47,6 +47,7 @@ class Enemy(effects.SpriteSheet):
         self.state = 0
         self.flipped = False
         self.booltop = True
+        self.score_count = False
         if pygame.mixer.get_init():
             self.sound = pygame.mixer.Sound(pkg_resources.resource_stream("applesauce", "sounds/Spotted.ogg"))
             self.sound.set_volume(1)

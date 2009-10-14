@@ -361,7 +361,6 @@ class Level(object):
                         [2 * settings.FLYER_RADIUS] * 2)
                 self.rect.center = rect.center
                 self.radius = settings.FLYER_RADIUS
-        score = 0
         for sprite in self.others:
             if sprite.type == 'flyer':
                 f = FlyerCircle(sprite.rect)
@@ -370,7 +369,13 @@ class Level(object):
                         self.enemies,
                         False,
                         pygame.sprite.collide_circle)
-                score += (1 << len(collided) // 5)
+                for c in collided:
+                    if hasattr(c, 'score_count'):
+                        c.score_count = True
+        score = len([sprite for sprite in self.enemies
+                       if hasattr(sprite, 'score_count') and
+                          sprite.score_count])
+        score = 1 << (score // 5)
         return score
 
 
