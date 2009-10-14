@@ -1,5 +1,8 @@
+from __future__ import division
+
 import copy
 import itertools
+import math
 
 import pygame
 
@@ -159,6 +162,20 @@ class Level(object):
         # blit background
         surface.blit(self.image, rect.move(-self.player.sprite.rect.left,
             -self.player.sprite.rect.top))
+        def rect_radius(rect):
+            a = rect.width / 2
+            b = rect.height / 2
+            return math.sqrt(a * a + b * b)
+        for sprite in self.enemies:
+            if hasattr(sprite, 'allerted') and sprite.allerted:
+                loc = (-player_rect.left + sprite.rect.left,
+                        -player_rect.top + sprite.rect.top)
+                pygame.draw.circle(surface,
+                        (255, 0, 0),
+                        rect.move(*loc).center,
+                        rect_radius(sprite.rect) + 5,
+                        5)
+
         groups = [self.others, self.enemies]
         if self.draw_walls:
             groups.append(self.walls)
