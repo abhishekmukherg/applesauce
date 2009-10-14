@@ -91,12 +91,15 @@ class Player(effects.SpriteSheet):
                 self.time = 2 * 11
                 self.anim_frame = 11
                 
-        self.speed = self.max_speed
-        if self.movement['up'] ^ self.movement['down'] == 1 and self.movement['left'] ^ self.movement['right'] == 1:
-            self.speed = self.max_speed/ math.sqrt( 2.0 )
-        print self.speed
-        
-        self.rect.move_ip( self.speed*(self.movement['right']-self.movement['left']), self.speed*(self.movement['down']-self.movement['up']) )
+        vector = (self.movement['right'] - self.movement['left'],
+                  self.movement['down'] - self.movement['up'])
+        def length(a, b):
+            return math.sqrt(vector[0] * vector[0] + vector[1] * vector[1])
+        vec_length = length(*vector)
+        if vec_length != 0:
+            vector = map(lambda x: x * self.max_speed / vec_length, vector)
+        self.speed = length(*vector)
+        self.rect.move_ip(*vector)
         
     
     def draw(self, screen):
