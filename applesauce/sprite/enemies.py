@@ -47,8 +47,11 @@ class Enemy(effects.SpriteSheet):
         self.state = 0
         self.flipped = False
         self.booltop = True
-        self.sound = pygame.mixer.Sound(pkg_resources.resource_stream("applesauce", "sounds/Spotted.ogg"))
-        self.sound.set_volume(1)
+        if pygame.mixer.get_init():
+            self.sound = pygame.mixer.Sound(pkg_resources.resource_stream("applesauce", "sounds/Spotted.ogg"))
+            self.sound.set_volume(1)
+        else:
+            self.sound = None
 
     @property
     def time_till_lost(self):
@@ -69,7 +72,7 @@ class Enemy(effects.SpriteSheet):
 
     @allerted.setter
     def allerted(self, val):
-        if val != self._allerted and val:
+        if val != self._allerted and val and self.sound is not None:
             self.sound.play()
         self._allerted = val
         if val:
