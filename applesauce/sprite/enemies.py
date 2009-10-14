@@ -205,7 +205,8 @@ class Enemy(effects.SpriteSheet):
         if self._random_dir is None:
             self._random_dir = random.choice(DIRECTIONS)
             LOG.debug("New random dir: %s" % self._random_dir)
-            self._random_steps = settings.TIME_IN_RANDOM_DIR
+            self._random_steps = settings.TIME_IN_RANDOM_DIR + \
+                    random.randint(0, settings.TIME_IN_RANDOM_DIR_VARIATION)
         if self._random_steps <= 0:
             if self._random_dir == 'none':
                 self._random_dir = None
