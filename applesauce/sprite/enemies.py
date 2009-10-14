@@ -20,6 +20,11 @@ class WallsNotFoundException(Exception):
     pass
 
 
+def vec_length(start, end):
+    vec = (end[0] - start[0], end[1] - start[1])
+    return math.sqrt(vec[0] * vec[0] + vec[1] * vec[1])
+
+
 class Enemy(pygame.sprite.Sprite):
     
     def __init__(self, player, walls, patrol=None, *groups):
@@ -61,10 +66,7 @@ class Enemy(pygame.sprite.Sprite):
             raise PlayerNotFoundException
         if self.walls is None:
             raise WallsNotFoundException
-        distance_vector = (self.player.rect.center[0] - self.rect.center[0],
-                           self.player.rect.center[1] - self.rect.center[1])
-        distance = math.sqrt(distance_vector[0] * distance_vector[0] +
-                             distance_vector[1] * distance_vector[1])
+        distance = vec_length(self.player.rect.center, self.rect.center)
         if distance > settings.OFFICER_VIEW_DISTANCE:
             return False
         return not any(
@@ -120,7 +122,7 @@ class Enemy(pygame.sprite.Sprite):
         my_loc = self.rect.center
         p_loc = self.player.rect.center
         vector = (p_loc[0] - my_loc[0], p_loc[1] - my_loc[1])
-        length = math.sqrt(vector[0] * vector[0] + vector[1] * vector[1])
+        length = vec_length(p_loc, my_loc)
         if length == 0:
             return (0, 0)
         vector = map(lambda x: (x * self.max_v)/length, vector)
