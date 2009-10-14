@@ -73,7 +73,7 @@ class Game( object ):
             if self.music is not None:
                 self.music.stop()
         elif val == "win":
-            self.levl_config = "level_data/victory.ini"
+            self.level_config = "level_data/victory.ini"
             if self.music is not None:
                 self.music.stop()
         elif val == "over":
