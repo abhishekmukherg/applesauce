@@ -308,11 +308,11 @@ class Level(object):
                 for enemy in self.enemies:
                     enemy.allerted = False
                     
+        player.bomb_place = False
         for bombsite in self.bombsites:
             if bombsite.rect.contains(player.rect):
                 if player.just_placed == True:
                     bombsite.kill()
-                    player.bomb_place = False
                 else:
                     player.bomb_place = True
             
