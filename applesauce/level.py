@@ -16,6 +16,8 @@ from applesauce.sprite import wall
 from applesauce.sprite import flyer
 from applesauce.sprite import turkeyshake
 from applesauce.sprite import hud
+from applesauce.sprite import bomb
+from applesauce.sprite import bombsite
 from applesauce.sprite import door
 
 
@@ -48,6 +50,10 @@ class Level(object):
         self.__image_name = image
         self.lives = 5
         self.respawn = respawn
+        self.bbar = pygame.Surface((202, 22))
+        self.bbar.fill((220,220,220))
+        self.bar = pygame.Surface((200,20))
+        self.bar.fill((100,0,0))
 
         self.hud = pygame.sprite.GroupSingle()
         self.player = pygame.sprite.GroupSingle()
@@ -82,7 +88,7 @@ class Level(object):
     def add_boombox(self):
         if self.player.sprite.boomboxes > 0:
             self.others.add(boombox.Boombox( self.big, self.player.sprite.rect.center, self.enemies))
-            #self.player.sprite.boomboxes -= 1
+            self.player.sprite.boomboxes -= 1
             
     def add_flyer(self):
         if self.player.sprite.flyers > 0:
@@ -98,11 +104,20 @@ class Level(object):
             elif self.player.sprite.contacting == 'right':
                 self.others.add( flyer.Flyer( self.player.sprite.rect.midright, 'left' ) )
                 self.player.sprite.flyers -= 1
+                
+    def add_bombsite(self, location = (0,0,0,0)):
+        self.bombsites.add( bombsite.Bombsite( location[0], location[1], location[2], location[3] ) )
         
     def add_turkeyshake(self):
         if self.player.sprite.turkeyshakes > 0:
             self.others.add( turkeyshake.Turkeyshake( self.big, self.player.sprite.rect.center, self.player.sprite.facing ) )
-            #self.player.sprite.turkeyshakes -= 1
+            self.player.sprite.turkeyshakes -= 1
+            
+    def add_bomb(self, value):
+        if value == True and self.player.sprite.bomb_place == True:
+            self.player.sprite.placing = 1
+        else:
+            self.player.sprite.placing = 0
             
     def add_player(self, location = (0,0), flyers = 0, bombs = 0, boomboxes = 0, turkeyshakes = 0):
         self.player.add(player.Player(
@@ -178,6 +193,11 @@ class Level(object):
         #self.enemy_collisions()
         for group in self.__groups:
             group.update(*args)
+        if self.player.sprite.placing == 200:
+            self.player.sprite.placing = 0
+            self.others.add( bomb.Bomb( self.player.sprite.rect.center ) )
+            self.player.sprite.bombs -= 1
+            self.player.sprite.just_placed = True
         self.player_collisions()
         self.other_collisions()
             
@@ -204,9 +224,10 @@ class Level(object):
                         rect_radius(sprite.rect) + 5,
                         5)
 
-        groups = [self.others, self.enemies, self.doors]
+        groups = [self.bombsites, self.others, self.enemies, self.doors]
         if self.draw_walls:
             groups.append(self.walls)
+        
         for group in groups:
             for sprite in group:
                 loc = (-player_rect.left + sprite.rect.left,
@@ -226,6 +247,13 @@ class Level(object):
         if self.hud.sprite is not None:
             surface.blit(self.hud.sprite.image,
                     self.hud.sprite.rect)
+        if self.player.sprite.placing > 0:
+            bbar_rect = self.bbar.get_rect()
+            bbar_rect.center = surface.get_rect().center
+            bar_rect = self.bar.get_rect()
+            bar_rect.center = bbar_rect.center
+            surface.blit( self.bbar, bbar_rect )
+            surface.blit( self.bar, bar_rect, pygame.Rect(0,0,self.player.sprite.placing,20) )
 
             
     def player_collisions(self):
@@ -270,6 +298,14 @@ class Level(object):
                 player.wait = 100
                 for enemy in self.enemies:
                     enemy.allerted = False
+                    
+        for bombsite in self.bombsites:
+            if bombsite.rect.contains(player.rect):
+                if player.just_placed == True:
+                    bombsite.kill()
+                    player.bomb_place = False
+                else:
+                    player.bomb_place = True
             
     # def enemy_collisions(self):
         # tmp = pygame.sprite.groupcollide( self.enemies, self.walls, False, False )

@@ -105,6 +105,8 @@ class Game( object ):
             self.level.add_enemy(1, location)
         for location in self.level_config.walls():
             self.level.add_wall(location)
+        for location in self.level_config.bombsites():
+            self.level.add_bombsite(location)
         for location in self.level_config.doors():
             self.level.add_door(location[0], location[1])
         if self.level_config.hud_level() is not None:
@@ -124,6 +126,8 @@ class Game( object ):
             self.state = 'lose'
         elif self.state == 'act1' and self.level.player.sprite.flyers == 0:
             self.state = 'act2'
+        elif self.state == 'act2' and self.level.player.sprite.bombs == 0:
+            self.state = 'win'
         for event in pygame.event.get():
             self.handle_event( event )
         if self.state == 'act1' or self.state == 'act2':
@@ -155,8 +159,8 @@ class Game( object ):
             elif event.key == pygame.K_UP:
                 if self.state == 'act1':
                     self.level.add_flyer()
-                #elif self.state == 'act2':
-                #    self.level.add_bomb()
+                elif self.state == 'act2':
+                    self.level.add_bomb(True)
             elif event.key == pygame.K_RIGHT:
                 self.level.add_turkeyshake()
             elif event.key == pygame.K_DOWN:
@@ -183,6 +187,8 @@ class Game( object ):
                 player.movement['left'] = 0
             elif event.key == pygame.K_d:
                 player.movement['right'] = 0
+            elif event.key == pygame.K_UP:
+                self.level.add_bomb(False)
 
     def draw(self):
         self.screen.fill( (50, 50, 50) )
