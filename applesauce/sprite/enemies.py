@@ -4,11 +4,13 @@ import pygame
 import weakref
 import logging
 import math
+import random
 
 from applesauce import settings
 
 
 LOG = logging.getLogger(__name__)
+DIRECTIONS = ('up', 'left', 'right', 'down', 'none')
 
 
 class PlayerNotFoundException(Exception):
@@ -27,6 +29,8 @@ class Enemy(pygame.sprite.Sprite):
         self.player = player
         self.walls = walls
         self.max_v = settings.ENEMY_MAX_V
+        self._random_steps = 0
+        self._random_dir = None
 
     @property
     def player(self):
@@ -127,20 +131,53 @@ class Enemy(pygame.sprite.Sprite):
         vector = self._vector_towards_player()
         tmp_rect = self.rect
         self.rect = self.rect.move(*vector)
+        self._return_from_collide(tmp_rect)
+    
+    def _return_from_collide(self, old_rect):
         collided = pygame.sprite.spritecollide(self, self.walls, False)
         for sprite in collided:
             if (self.rect.top < sprite.rect.bottom and
-                    tmp_rect.top >= sprite.rect.bottom):
+                    old_rect.top >= sprite.rect.bottom):
                 self.rect.top = sprite.rect.bottom
             if (self.rect.left < sprite.rect.right and
-                    tmp_rect.left >= sprite.rect.right):
+                    old_rect.left >= sprite.rect.right):
                 self.rect.left = sprite.rect.right
             if (self.rect.bottom > sprite.rect.top and
-                    tmp_rect.bottom <= sprite.rect.top):
+                    old_rect.bottom <= sprite.rect.top):
                 self.rect.bottom = sprite.rect.top
             if (self.rect.right > sprite.rect.left and
-                    tmp_rect.right <= sprite.rect.left):
+                    old_rect.right <= sprite.rect.left):
                 self.rect.right = sprite.rect.left
+
+    def walk_randomly(self):
+        if self._random_dir is None:
+            self._random_dir = random.choice(DIRECTIONS)
+            LOG.debug("New random dir: %s" % self._random_dir)
+            self._random_steps = settings.TIME_IN_RANDOM_DIR
+        if self._random_steps <= 0:
+            if self._random_dir == 'none':
+                self._random_dir = None
+            else:
+                self._random_dir = 'none'
+            # One for good measure (this tick)
+            self._random_steps = settings.TIME_IN_RANDOM_DIR - 1
+            return
+        self._random_steps -= 1
+        veloc_dict = {'up': (0, 1),
+                      'down': (0, -1),
+                      'right': (1, 0),
+                      'left': (-1, 0),
+                      'none': (0, 0)}
+        assert all(k in veloc_dict for k in DIRECTIONS)
+        assert all(((bool(abs(v[0]) == 1) ^ bool(abs(v[1]) == 1)) or
+                    (v[0] == 0 and v[1] == 0))
+                for v in veloc_dict.itervalues())
+        veloc = veloc_dict[self._random_dir]
+        veloc = map(lambda x: x * self.max_v, veloc)
+        tmp_rect = self.rect
+        self.rect = self.rect.move(*veloc)
+        self._return_from_collide(tmp_rect)
+
 
 class BasicEnemy(Enemy):
     
@@ -181,6 +218,7 @@ class Officer(Enemy):
 
         # the officer has no idea the player exists
         if not can_see_player and not self.allerted:
+            self.walk_randomly()
             return
 
         if can_see_player:
