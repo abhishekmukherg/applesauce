@@ -98,7 +98,9 @@ class Level(object):
 
         """
         if level == 0:
-            enemy = enemies.BasicEnemy(self.player.sprite, self.walls)
+            enemy = enemies.BasicEnemy(self.player.sprite,
+                    self.walls,
+                    self.enemies)
         elif level == 1:
             enemy = enemies.Officer(self.player.sprite, self.walls)
         else:

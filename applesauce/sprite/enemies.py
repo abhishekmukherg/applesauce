@@ -183,11 +183,24 @@ class Enemy(pygame.sprite.Sprite):
 
 class BasicEnemy(Enemy):
     
-    def __init__(self, player, walls, *groups):
+    def __init__(self, player, walls, all_enemies, *groups):
         Enemy.__init__(self, player, walls, *groups)
         self.image = pygame.Surface((25, 25))
         self.image.fill((160, 160, 160))
         self.rect = self.image.get_rect()
+        self.all_enemies = all_enemies
+
+    @property
+    def all_enemies(self):
+        return self.__all_enemies()
+
+    @all_enemies.setter
+    def all_enemies(self, val):
+        self.__all_enemies = weakref.ref(val)
+
+    def update(self):
+        if self.allerted:
+            pass
 
 
 
