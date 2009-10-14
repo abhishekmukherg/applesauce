@@ -48,7 +48,7 @@ class Level(object):
         self.player = pygame.sprite.GroupSingle()
         self.enemies = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
-        self.pickups = pygame.sprite.Group()
+        self.bombsites = pygame.sprite.Group()
         self.others = pygame.sprite.Group()
 
         self.__groups = (self.player, self.enemies, self.walls, self.others)
@@ -63,10 +63,10 @@ class Level(object):
         new_level.player = copy.copy(self.player)
         new_level.enemies = copy.copy(self.enemies)
         new_level.walls = copy.copy(self.walls)
-        new_level.pickups = copy.copy(self.pickups)
+        new_level.bombsites = copy.copy(self.bombsites)
         new_level.others = copy.copy(self.others)
         new_level.__groups = (new_level.player, new_level.enemies,
-                new_level.walls, new_level.pickups, new_level.others)
+                new_level.walls, new_level.bombsites, new_level.others)
         return new_level
         
     def add_boombox(self):
@@ -152,6 +152,7 @@ class Level(object):
         return True
 
     def update(self, *args):
+        self.player.sprite.booltop = False
         #self.enemy_collisions()
         for group in self.__groups:
             group.update(*args)
@@ -207,7 +208,6 @@ class Level(object):
             
     def player_collisions(self):
         player = self.player.sprite
-        player.booltop = False
         player.contacting = ''
         #constrain to screen
         tmp_rect = player.rect.move( player.speed*(player.movement['right']-player.movement['left']), player.speed*(player.movement['down']-player.movement['up']) )

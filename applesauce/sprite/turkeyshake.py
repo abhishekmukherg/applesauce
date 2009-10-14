@@ -1,6 +1,7 @@
 import pygame
 import math
 import util
+import pkg_resources
 
 
 class Turkeyshake(pygame.sprite.Sprite):
@@ -17,6 +18,9 @@ class Turkeyshake(pygame.sprite.Sprite):
         self.time = 30
         self.exploded = False
         self.big = big
+        self.sound = pygame.mixer.Sound(pkg_resources.resource_stream("applesauce", "sounds/Slurping Smoothie.ogg"))
+        self.sound.set_volume(0.8)
+        self.sound.play()
         
         if direction.endswith( 'up' ):
             self.movement['up'] = 1

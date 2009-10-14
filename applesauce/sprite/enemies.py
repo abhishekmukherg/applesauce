@@ -1,6 +1,7 @@
 from __future__ import division
 
 import pygame
+import pkg_resources
 import weakref
 import logging
 import math
@@ -31,6 +32,7 @@ class Enemy(effects.SpriteSheet):
     
     def __init__(self, player, walls, image, size, patrol=None, *groups):
         effects.SpriteSheet.__init__(self, util.load_image( image ), size )
+        self._allerted = False
         self.allerted = False
         self.patrol = patrol
         self.player = player
@@ -45,6 +47,8 @@ class Enemy(effects.SpriteSheet):
         self.state = 0
         self.flipped = False
         self.booltop = True
+        self.sound = pygame.mixer.Sound(pkg_resources.resource_stream("applesauce", "sounds/Spotted.ogg"))
+        self.sound.set_volume(1)
 
     @property
     def time_till_lost(self):
@@ -57,6 +61,7 @@ class Enemy(effects.SpriteSheet):
             self.allerted = False
         elif self._time_till_lost > 0 and not self.allerted:
             self.allerted = True
+            
 
     @property
     def allerted(self):
@@ -64,6 +69,8 @@ class Enemy(effects.SpriteSheet):
 
     @allerted.setter
     def allerted(self, val):
+        if val != self._allerted and val:
+            self.sound.play()
         self._allerted = val
         if val:
             self.time_till_lost = settings.TIME_UNTIL_OFFICER_LOST

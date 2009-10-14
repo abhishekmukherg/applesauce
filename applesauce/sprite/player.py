@@ -27,15 +27,14 @@ class Player(effects.SpriteSheet):
         self.anim_frame = 0
         self.state = 0
         self.flipped = False
-        self.booltop = False
+        self.booltop = True
         self.wait = 0
         
         self.rect.center = location
         if big:
-            self.rect.inflate_ip( 0,-45 )
+            self.rect.height -= 45
         else:
-            self.rect.inflate_ip( 0,-22.5 )
-        self.rect.top = location[1]
+            self.rect.height -= 22.5
         
     @property
     def booltop(self):

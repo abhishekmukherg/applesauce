@@ -1,4 +1,5 @@
 import weakref
+import pkg_resources
 
 import pygame
 
@@ -21,7 +22,9 @@ class Boombox(pygame.sprite.Sprite):
         self.bar.fill( ( 255, 0, 0 ) )
         self.bar_rect = self.bar.get_rect()
         self.time = 300
-        self.sound = None
+        self.sound = pygame.mixer.Sound(pkg_resources.resource_stream("applesauce", "sounds/Annoying Boombox Music.ogg"))
+        self.sound.set_volume(0.8)
+        self.sound.play()
         self.enemies = enemies
         
         self.rect.centerx = center[0]
@@ -57,5 +60,6 @@ class Boombox(pygame.sprite.Sprite):
     def update(self):
         self.time -= 1
         if self.time == 0:
+            self.sound.stop()
             self.kill()
         self._attract_nearby_enemies()

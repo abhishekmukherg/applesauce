@@ -1,4 +1,5 @@
 import logging
+import pkg_resources
 
 import pygame
 
@@ -33,6 +34,9 @@ class Game( object ):
         self.screen = pygame.display.set_mode(settings.SCREEN_SIZE)
         self.level = None
         self.state = 'splash'
+        self.music = pygame.mixer.Sound(pkg_resources.resource_stream("applesauce", "sounds/BackgroundMusic.ogg"))
+        self.music.set_volume(1)
+        self.music.play(-1)
         
         #self.splash = util.load_image( self.splash_image )
         #self.win = util.load_image( self.win_image )
@@ -60,8 +64,10 @@ class Game( object ):
             self.level_config = "level_data/info3.ini"
         elif val == "lose":
             self.level_config = "level_data/gameover.ini"
+            self.music.stop()
         elif val == "win":
             self.levl_config = "level_data/victory.ini"
+            self.music.stop()
         elif val == "over":
             pass
         else:
