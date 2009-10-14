@@ -105,6 +105,8 @@ class Game( object ):
             self.level.add_enemy(1, location)
         for location in self.level_config.walls():
             self.level.add_wall(location)
+        for location in self.level_config.doors():
+            self.level.add_door(location[0], location[1])
         if self.level_config.hud_level() is not None:
             self.level.add_hud(self.level_config.hud_level())
      
@@ -157,6 +159,8 @@ class Game( object ):
                 #    self.level.add_bomb()
             elif event.key == pygame.K_RIGHT:
                 self.level.add_turkeyshake()
+            elif event.key == pygame.K_DOWN:
+                self.level.touch_door()
             elif event.key == pygame.K_o:
                 if self.level.draw_walls:
                     self.level.draw_walls = False

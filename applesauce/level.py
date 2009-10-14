@@ -3,6 +3,7 @@ from __future__ import division
 import copy
 import itertools
 import math
+import logging
 
 import pygame
 
@@ -15,6 +16,10 @@ from applesauce.sprite import wall
 from applesauce.sprite import flyer
 from applesauce.sprite import turkeyshake
 from applesauce.sprite import hud
+from applesauce.sprite import door
+
+
+LOG = logging.getLogger(__name__)
 
 
 class InvalidEnemyException(IndexError):
@@ -50,8 +55,13 @@ class Level(object):
         self.walls = pygame.sprite.Group()
         self.bombsites = pygame.sprite.Group()
         self.others = pygame.sprite.Group()
+        self.doors = pygame.sprite.Group()
 
-        self.__groups = (self.player, self.enemies, self.walls, self.others)
+        self.__groups = (self.player,
+                         self.enemies,
+                         self.walls,
+                         self.others,
+                         self.doors)
         
         self.draw_walls = False
         
@@ -111,6 +121,9 @@ class Level(object):
     def add_wall(self, location = (0,0,0,0)):
         self.walls.add( wall.Wall( location[0], location[1], location[2], location[3] ) )
 
+    def add_door(self, location, horizontal):
+        self.doors.add(door.Door(location, horizontal))
+
     def add_enemy(self, level, location=(0, 0)):
         """Adds an anemy to the level
 
@@ -130,6 +143,15 @@ class Level(object):
         else:
             raise InvalidEnemyException(level, 1)
         self.enemies.add(enemy)
+
+    def touch_door(self):
+        LOG.debug("Touching nearest door in %s" % str(self.doors))
+        for sprite in self.doors:
+            if pygame.sprite.collide_rect_ratio(1.5)(sprite, 
+                    self.player.sprite):
+                LOG.debug("Moving %s" % str(sprite))
+                sprite.moving = True
+                return
     
     def remove(self, *sprites):
         for sprite_iter in sprites:
@@ -182,7 +204,7 @@ class Level(object):
                         rect_radius(sprite.rect) + 5,
                         5)
 
-        groups = [self.others, self.enemies]
+        groups = [self.others, self.enemies, self.doors]
         if self.draw_walls:
             groups.append(self.walls)
         for group in groups:
