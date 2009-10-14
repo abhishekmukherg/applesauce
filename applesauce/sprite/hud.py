@@ -16,6 +16,12 @@ class Hud(pygame.sprite.Sprite):
         self.lives_fn = lives_fn
         if level == 0:
             self._image = util.load_image("HUD_Lvl_01.png")
+            self.right_col_fn = lambda: self.player().flyers
+        elif level == 1:
+            self._image = util.load_image("HUD_Lvl_02.png")
+            self.right_col_fn = lambda: self.player().bombs
+        else:
+            assert False
         self.rect = self._image.get_rect()
 
     @property
@@ -24,23 +30,23 @@ class Hud(pygame.sprite.Sprite):
         if pygame.font.get_init() and self.player():
             font = pygame.font.Font(pygame.font.get_default_font(),
                     settings.HUD_FONT_SIZE)
-            if self.level == 0:
+            if self.level == 0 or self.level == 1:
                 surface.blit(font.render(str(self.player().turkeyshakes),
                                 False,
                                 (255, 255, 255)),
-                        pygame.Rect((600, 35), (0, 0)))
+                        pygame.Rect((620, 35), (0, 0)))
                 surface.blit(font.render(str(self.player().boomboxes),
                                 False,
                                 (255, 255, 255)),
-                        pygame.Rect((475, 35), (0, 0)))
-                surface.blit(font.render(str(self.player().flyers),
+                        pygame.Rect((485, 35), (0, 0)))
+                surface.blit(font.render(str(self.right_col_fn()),
                                 False,
                                 (255, 255, 255)),
-                        pygame.Rect((750, 35), (0, 0)))
+                        pygame.Rect((745, 35), (0, 0)))
                 surface.blit(font.render(str(self.lives_fn()),
                                 False,
                                 (255, 255, 255)),
-                        pygame.Rect((50, 35), (0, 0)))
+                        pygame.Rect((75, 35), (0, 0)))
         return surface
         
     def update(self):
