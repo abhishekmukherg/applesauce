@@ -325,12 +325,18 @@ class Level(object):
             if other.type == 'turkeyshake' and other.exploded:
                 continue
             if other.type == 'turkeyshake':
+                # TODO: Make this less sucky (two collisions checks)
                 collisions = pygame.sprite.spritecollide(
                         other,
                         self.enemies,
                         False)
                 if collisions:
-                    for sprite in collisions:
+                    class TempSprite:
+                        rect = other.rect.inflate(settings.TURKEY_SPLASH_SIZE,
+                            settings.TURKEY_SPLASH_SIZE)
+                    for sprite in pygame.sprite.spritecollide(TempSprite,
+                            self.enemies, False):
+                        LOG.debug("Reducing speed")
                         if hasattr(sprite, 'max_v'):
                             sprite.max_v *= settings.TURKEY_SPEED_MODIFIER
                     other.explode()
