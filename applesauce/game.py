@@ -32,7 +32,7 @@ class Game( object ):
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode(settings.SCREEN_SIZE)
         self.level = None
-        self.state = 'act1'
+        self.state = 'splash'
         
         #self.splash = util.load_image( self.splash_image )
         #self.win = util.load_image( self.win_image )
