@@ -28,6 +28,7 @@ class Player(effects.SpriteSheet):
         self.state = 0
         self.flipped = False
         self.booltop = False
+        self.wait = 0
         
         self.rect.center = location
         if big:
@@ -49,6 +50,9 @@ class Player(effects.SpriteSheet):
             self.rect.top = self.rect.bottom
         
     def update(self):
+        if self.wait > 0:
+            self.wait -= 1
+            return
         lr = False
         if self.movement['left'] == 1 and self.movement['right'] == 0:
             self.facing = 'left'

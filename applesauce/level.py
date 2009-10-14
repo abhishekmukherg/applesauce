@@ -36,12 +36,13 @@ class InvalidEnemyException(IndexError):
 
 class Level(object):
 
-    def __init__(self, image, big):
+    def __init__(self, image, big, respawn):
         self.big = big
         self.image = util.load_image(image)
         self.rect = self.image.get_rect()
         self.__image_name = image
         self.lives = 5
+        self.respawn = respawn
 
         self.hud = pygame.sprite.GroupSingle()
         self.player = pygame.sprite.GroupSingle()
@@ -195,9 +196,10 @@ class Level(object):
                     surface.blit(sprite.image, rect.move(*loc))
             
         # blit player
-        surface.blit(self.player.sprite.image,
-                rect,
-                self.player.sprite.draw_area)
+        if self.player.sprite.wait%10 < 5: 
+            surface.blit(self.player.sprite.image,
+                    rect,
+                    self.player.sprite.draw_area)
         if self.hud.sprite is not None:
             surface.blit(self.hud.sprite.image,
                     self.hud.sprite.rect)
@@ -237,6 +239,15 @@ class Level(object):
                 player.rect.right = wall.rect.left
                 if player.facing.startswith( 'right' ) == True and player.rect.bottom <= wall.rect.bottom and player.rect.top >= wall.rect.top:
                     player.contacting = 'right'
+                    
+        tmp_list = pygame.sprite.spritecollide( player, self.enemies, False, pygame.sprite.collide_rect )
+        for enemy in tmp_list:
+            if enemy.allerted and player.wait == 0:
+                self.lives -= 1
+                player.rect.center = self.respawn
+                player.wait = 100
+                for enemy in self.enemies:
+                    enemy.allerted = False
             
     # def enemy_collisions(self):
         # tmp = pygame.sprite.groupcollide( self.enemies, self.walls, False, False )
