@@ -152,6 +152,7 @@ class Enemy(pygame.sprite.Sprite):
                 self.rect.right = sprite.rect.left
 
     def walk_randomly(self):
+        return
         if self._random_dir is None:
             self._random_dir = random.choice(DIRECTIONS)
             LOG.debug("New random dir: %s" % self._random_dir)
@@ -183,11 +184,27 @@ class Enemy(pygame.sprite.Sprite):
 
 class BasicEnemy(Enemy):
     
-    def __init__(self, player, walls, all_enemies, *groups):
+    def __init__(self, player, walls, *groups):
         Enemy.__init__(self, player, walls, *groups)
         self.image = pygame.Surface((25, 25))
         self.image.fill((160, 160, 160))
         self.rect = self.image.get_rect()
+
+    def update(self):
+        if self.allerted:
+            self.walk_towards_player()
+        else:
+            self.walk_randomly()
+
+
+class Officer(Enemy):
+
+    def __init__(self, player, walls, all_enemies, *groups):
+        Enemy.__init__(self, player, walls, *groups)
+        self.image = pygame.Surface((25, 25))
+        self.image.fill((100, 100, 100))
+        self.rect = self.image.get_rect()
+        self.time_till_lost = 0
         self.all_enemies = all_enemies
 
     @property
@@ -197,21 +214,6 @@ class BasicEnemy(Enemy):
     @all_enemies.setter
     def all_enemies(self, val):
         self.__all_enemies = weakref.ref(val)
-
-    def update(self):
-        if self.allerted:
-            pass
-
-
-
-class Officer(Enemy):
-
-    def __init__(self, player, walls, *groups):
-        Enemy.__init__(self, player, walls, *groups)
-        self.image = pygame.Surface((25, 25))
-        self.image.fill((100, 100, 100))
-        self.rect = self.image.get_rect()
-        self.time_till_lost = 0
 
     @property
     def time_till_lost(self):
@@ -224,6 +226,26 @@ class Officer(Enemy):
             self.allerted = False
         else:
             self.allerted = True
+
+    def _alert_nearby_enemies(self):
+        if self.all_enemies is None:
+            return
+        bounding_rect = pygame.Rect((0, 0),
+                [settings.OFFICER_ALERT_DISTANCE * 2] * 2)
+        bounding_rect.center = self.rect.center
+        class BoundingRectSprite:
+            rect = bounding_rect
+            radius = settings.OFFICER_ALERT_DISTANCE
+        x = BoundingRectSprite
+        sprites = pygame.sprite.spritecollide(
+                x,
+                self.all_enemies,
+                False,
+                pygame.sprite.collide_circle
+                )
+        for sprite in sprites:
+            if hasattr(sprite, 'allerted'):
+                sprite.allerted = True
 
     def update(self):
         can_see_player = self.can_see_player()
@@ -239,4 +261,5 @@ class Officer(Enemy):
         if can_see_player:
             self.time_till_lost = settings.TIME_UNTIL_OFFICER_LOST
 
+        self._alert_nearby_enemies()
         self.walk_towards_player()
