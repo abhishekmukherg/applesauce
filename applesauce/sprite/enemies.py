@@ -36,6 +36,31 @@ class Enemy(pygame.sprite.Sprite):
         self.max_v = settings.ENEMY_MAX_V
         self._random_steps = 0
         self._random_dir = None
+        self.time_till_lost = 0
+
+    @property
+    def time_till_lost(self):
+        return self._time_till_lost
+
+    @time_till_lost.setter
+    def time_till_lost(self, val):
+        self._time_till_lost = val
+        if self._time_till_lost <= 0 and self.allerted:
+            self.allerted = False
+        elif self._time_till_lost > 0 and not self.allerted:
+            self.allerted = True
+
+    @property
+    def allerted(self):
+        return self._allerted
+
+    @allerted.setter
+    def allerted(self, val):
+        self._allerted = val
+        if val:
+            self.time_till_lost = settings.TIME_UNTIL_OFFICER_LOST
+        else:
+            self.time_till_lost = 0
 
     @property
     def player(self):
@@ -181,6 +206,9 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.rect.move(*veloc)
         self._return_from_collide(tmp_rect)
 
+    def update(self):
+        self.time_till_lost -= 1
+
 
 class BasicEnemy(Enemy):
     
@@ -191,6 +219,8 @@ class BasicEnemy(Enemy):
         self.rect = self.image.get_rect()
 
     def update(self):
+        print self.time_till_lost
+        super(BasicEnemy, self).update()
         if self.allerted:
             self.walk_towards_player()
         else:
@@ -215,18 +245,6 @@ class Officer(Enemy):
     def all_enemies(self, val):
         self.__all_enemies = weakref.ref(val)
 
-    @property
-    def time_till_lost(self):
-        return self._time_till_lost
-
-    @time_till_lost.setter
-    def time_till_lost(self, val):
-        self._time_till_lost = val
-        if self._time_till_lost <= 0:
-            self.allerted = False
-        else:
-            self.allerted = True
-
     def _alert_nearby_enemies(self):
         if self.all_enemies is None:
             return
@@ -244,14 +262,14 @@ class Officer(Enemy):
                 pygame.sprite.collide_circle
                 )
         for sprite in sprites:
+            if sprite is self:
+                continue
             if hasattr(sprite, 'allerted'):
                 sprite.allerted = True
 
     def update(self):
+        super(Officer, self).update()
         can_see_player = self.can_see_player()
-        # Reduce time_till lost if can't see player
-        if not can_see_player and self.allerted:
-            self.time_till_lost -= 1
 
         # the officer has no idea the player exists
         if not can_see_player and not self.allerted:
@@ -259,7 +277,7 @@ class Officer(Enemy):
             return
 
         if can_see_player:
-            self.time_till_lost = settings.TIME_UNTIL_OFFICER_LOST
+            self.allerted = True
 
         self._alert_nearby_enemies()
         self.walk_towards_player()
