@@ -10,7 +10,9 @@ from setuptools import setup
 setup(name="applesauce",
         version=VERSION,
         packages=["applesauce", "applesauce.sprite"],
-        scripts=["main.py"],
+        entry_points={
+            'gui_scripts': ['applesauce=applesauce.game:main'],
+        },
         install_requires = ['pygame'],
         package_data = {
             'applesauce': ['images/*.png', 'level_data/*.ini'],
