@@ -1,0 +1,6 @@
+build
+dist
+applesauce.egg-info
+*.pyc
+.*.sw*
+*~
