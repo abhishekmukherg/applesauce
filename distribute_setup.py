@@ -1,3 +1,4 @@
+#!python
 # This file is part of applesauce.
 #
 # applesauce is free software: you can redistribute it and/or modify
@@ -12,7 +13,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with applesace.  If not, see <http://www.gnu.org/licenses/>.
-#!python
 """Bootstrap distribute installation
 
 If you want to use setuptools in your package's setup.py, just include this
