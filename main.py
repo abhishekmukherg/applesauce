@@ -18,3 +18,6 @@ import applesauce.game
 
 def main():
     applesauce.game.main()
+
+if __name__ == "__main__":
+    main()

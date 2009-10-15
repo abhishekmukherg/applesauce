@@ -41,7 +41,6 @@ class InvalidStateException(Exception):
 class Game( object ):
 
     def __init__( self ):
-        pygame.init()
         self.caption = settings.CAPTION
         
         self.clock = pygame.time.Clock()
@@ -214,9 +213,11 @@ class Game( object ):
             self.screen.blit(self.level.image, (0, 0))
         
         
-g = Game()
-while g.state != 'over':
-    g.update()
-    g.draw()
-    pygame.display.flip()
+def main():
+    pygame.init()
+    g = Game()
+    while g.state != 'over':
+        g.update()
+        g.draw()
+        pygame.display.flip()
 #pygame.mixer.music.stop()
